@@ -6,6 +6,7 @@
 #include <QBasicTimer>
 #include <QWidget>
 #include <QPointF>
+#include <QTime>
 
 class Timer : public QWidget
 {
@@ -27,6 +28,9 @@ private:
     int position;
     int step;
     int pt;
-    QPointF t[20];
+    QPointF t[4];
+    bool b[4];
+    int tps_a_jouer[4];
+    QTime time;
 };
 
