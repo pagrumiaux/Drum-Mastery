@@ -32,5 +32,8 @@ private:
     bool b[4];
     int tps_a_jouer[4];
     QTime time;
+    int vitesse;
+    bool vue;
+    bool c_parti;
 };
 
