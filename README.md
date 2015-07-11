@@ -1,5 +1,5 @@
 # Drum-Mastery
-Drum Mastery is a music software which enables drums players to improve themselves for the double pedal skill, pluging a bass drum pad into the computer.
+Drum Mastery is a music software which enables drums players to improve themselves in solfège, more precisely in rythmes, pluging a drum pad into the computer.
 
 So far, we are a team of 6 developers, all from the same engineering school : Ecole Centrale de Lille, Lille, France. The former idea comes from a professor of this school, M. Xavier Margueron.
 We are all fond of music, which is the driving force of this project.
