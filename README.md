@@ -13,6 +13,6 @@ Other features will be developed, as a metronomy, count, or superposition of the
 We hope this project will be a success, for the music itself!
 
 
-The former team (P-A, Yazid, Vincent, Hugo, Yann, Antoine, and the original idea of the project, M. Xavier Margueron).
+The former team (Pierre-Amaury Grumiaux, Yazid Smahi, Vincent Berrier, Hugo Vincent, Yann Peter, Antoine Desjonquères, and the original idea of the project, M. Xavier Margueron).
 
 
