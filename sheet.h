@@ -8,6 +8,7 @@
 #include <QPointF>
 #include <QTime>
 #include <QMediaPlayer>
+#include <QScrollArea>
 
 #include "measure.h"
 #include "notes_jugees.h"
@@ -19,9 +20,10 @@ class Sheet : public QWidget
 public:
     Sheet(QWidget *parent = 0);
     Note_jugee* getNoteJugee(int numero, Note_jugee* premiere_note);
+    void resetListeJ(Note_jugee* premiere_note);
+    int getIndice_essai();
 
 public slots:
-    //  void setPos(const int pos) { position = pos; }
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -43,7 +45,8 @@ private:
     int m_taille_mesure; // taille d'une mesure en pixel
     Measure m_mesure;
 
-    Note_jugee *liste_notes_jugees;
-    int indice_liste_notes_jugees;
+    Note_jugee* tab_liste_jugee[10];
+    int indice_j;
+    int indice_essai;
 };
 
