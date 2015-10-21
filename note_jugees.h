@@ -9,11 +9,14 @@ public:
     void creer_suivante(); // ajoute une note a la liste
     void suppr_suivantes(); //supprime toutes les notes suivantes dans la liste (dans la mesure)
     Note_jugee* getSuivante();
+    void setSuivante(Note_jugee* note);
     bool getCorrecte();
     void setCorrecte(bool valeur);
     bool estDerniere();
+    void setDerniere(bool v);
     int getTemps();
     void setTemps(int temps);
+    bool estDefaut();
 
 private:
     float m_temps_joue;
