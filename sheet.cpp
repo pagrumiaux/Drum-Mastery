@@ -18,6 +18,7 @@ Sheet::Sheet(QWidget *parent)
     step = 50; //coordonnées en x du départ du curseur
     vue = true;
     started = false;
+    metronome_active = false;
     m_taille_mesure = 500;
 
     /*initialisation des listes de notes jugées*/
@@ -91,11 +92,14 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
         painter.drawText(250,200, n_compte);
     }
 
-    if ((0 <= time.elapsed() && time.elapsed() <=vitesse+1) || (m_taille_mesure*vitesse-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse+(floor(vitesse/2)+1)) || (m_taille_mesure*vitesse/4-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse/4+(floor(vitesse/2)+1))
-            || (m_taille_mesure*vitesse*2/4-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse*2/4+(floor(vitesse/2)+1)) || (m_taille_mesure*vitesse*3/4-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse*3/4+(floor(vitesse/2)+1)))
+    if(metronome_active)
     {
-        metronome.play();
-        qDebug("m : %d", time.elapsed());
+        if ((0 <= time.elapsed() && time.elapsed() <=vitesse+1) || (m_taille_mesure*vitesse-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse+(floor(vitesse/2)+1)) || (m_taille_mesure*vitesse/4-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse/4+(floor(vitesse/2)+1))
+                || (m_taille_mesure*vitesse*2/4-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse*2/4+(floor(vitesse/2)+1)) || (m_taille_mesure*vitesse*3/4-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse*3/4+(floor(vitesse/2)+1)))
+        {
+            metronome.play();
+            qDebug("m : %d", time.elapsed());
+        }
     }
 
     /*mesure à jouer*/
@@ -377,6 +381,14 @@ Note_jugee* Sheet::getNoteJugee(int numero, Note_jugee* premiere_note)
         }
         return note_int;
     }
+}
+
+void Sheet::setMetronome()
+{
+    if(metronome_active)
+        metronome_active = false;
+    if(!metronome_active)
+        metronome_active = true;
 }
 
 void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est pressée
