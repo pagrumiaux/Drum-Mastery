@@ -25,6 +25,7 @@ public:
     int getIndice_essai();
     int getPerformance();
     QPixmap ImageOfNote(Note *note, char c);
+    void setMetronome();
 
 public slots:
 
@@ -44,6 +45,7 @@ private:
     bool vue; //vrai si on veut avoir la vue
     bool started; //vrai si on est en train de jouer
     bool decompte; //vrai pour le décompte, faux une fois le décompte effectué
+    bool metronome_active;
 
     QMediaPlayer kick;
     QMediaPlayer metronome;
