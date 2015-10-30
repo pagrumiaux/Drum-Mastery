@@ -10,14 +10,14 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     Sheet *sheet = new Sheet(0);
-    sheet->setFixedWidth(500);
+    sheet->setFixedWidth(600);
     sheet->setMinimumHeight(1000);
     QScrollArea *scrollArea = new QScrollArea;
 
     scrollArea->setWidget(sheet);
-    scrollArea->setFixedWidth(500);
+    scrollArea->setFixedWidth(600);
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scrollArea->ensureVisible(0, 500);
+    //scrollArea->ensureVisible(0, 500);
 
     sheet->setFocus();
     sheet->show();
