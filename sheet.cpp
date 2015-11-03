@@ -16,9 +16,9 @@ Sheet::Sheet(QWidget *parent)
     : QWidget(parent)
 {
     step = 50; //coordonnées en x du départ du curseur
-    vue = true;
+    vue = false;
     started = false;
-    metronome_active = false;
+    metronome_active = true;
     m_taille_mesure = 500;
 
     /*initialisation des listes de notes jugées*/
@@ -53,8 +53,19 @@ Sheet::Sheet(QWidget *parent)
     note_4->ajouter_suivante(note_5);
 
     m_mesure.setNote(note_1);
-}
 
+    zone_coloree = new Colored(0, m_taille_mesure, tab_liste_jugee, m_mesure, vitesse);
+    zone_coloree->setMinimumSize(600, 780);
+    scrollArea = new QScrollArea;
+    scrollArea->setWidget(zone_coloree);
+    scrollArea->setFixedWidth(600);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea->setVisible(true);
+
+    layoutV = new QVBoxLayout;
+    layoutV->addWidget(this);
+    layoutV->addWidget(scrollArea);
+}
 
 void Sheet::paintEvent(QPaintEvent * /* event */)
 {
@@ -63,6 +74,7 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
 
     //qDebug("début : %d", time.elapsed());
 
+    /*affichage pourcentage + numero essai*/
     QString p, q;
     p.append(QString("%1%").arg(getPerformance()));
     q.append(QString("essai : %1").arg(getIndice_essai()));
@@ -92,6 +104,7 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
         painter.drawText(250,200, n_compte);
     }
 
+    /*lecture du metronome*/
     if(metronome_active)
     {
         if ((0 <= time.elapsed() && time.elapsed() <=vitesse+1) || (m_taille_mesure*vitesse-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse+(floor(vitesse/2)+1)) || (m_taille_mesure*vitesse/4-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse/4+(floor(vitesse/2)+1))
@@ -116,19 +129,6 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     painter.setPen(QPen(Qt::black, 1));
     painter.drawLine(0, 100, 1200, 100);
 
-    /*mesure d'essais*/
-    int a;
-    for (a=0; a < indice_essai; a++)
-    {
-        painter.setPen(QPen(QColor(80,80,80,255), 3));
-        painter.drawLine(50, 150+a*75, m_taille_mesure + 50, 150+a*75); // barre horizontale
-        painter.drawLine(50, 135+a*75, 50, 165+a*75); // barre début mesure
-        painter.drawLine(m_taille_mesure + 50, 135+a*75, m_taille_mesure + 50, 165+a*75); // barre fin mesure
-        painter.setPen(QPen(QColor(80,80,80,255), 1));
-        painter.drawLine(m_taille_mesure/4 + 50, 140+a*75, m_taille_mesure/4 + 50, 160+a*75);// barre de mesure
-        painter.drawLine(2*m_taille_mesure/4 + 50, 140+a*75, 2*m_taille_mesure/4 + 50, 160+a*75);// barre de mesure
-        painter.drawLine(3*m_taille_mesure/4 + 50, 140+a*75, 3*m_taille_mesure/4 + 50, 160+a*75);// barre de mesure
-    }
 
     /*Dessin des notes sur la mesure à jouer*/
     painter.setPen(QPen(Qt::black, 10));
@@ -147,29 +147,6 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
         valeur_prec = note_int->getValeur();
     }
 
-
-    /*Dessin sur la mesure d'essai*/
-    if(vue)
-    {
-        int b;
-        for (b=0; b<indice_essai; b++)
-        {
-            painter.setPen(QPen(Qt::black, 10));
-            int x = 50;
-            Note *note_int = m_mesure.getNote(); //note intermédiaire pour parcourir la liste de notes
-            float valeur_prec = note_int->getValeur(); //retient en mémoire la valeur de la note d'avant
-            painter.drawPixmap(QRectF(x, 103+75*b, 30, 58), QPixmap("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_g.png"), source);
-
-            while (note_int->estDerniere() != true)
-            {
-                x += valeur_prec*m_taille_mesure;                
-                note_int = note_int->getSuivante();
-                painter.drawPixmap(QRectF(x, 103+75*b, 30, 58), ImageOfNote(note_int, 'g'), source);
-                valeur_prec = note_int->getValeur();
-            }
-        }
-    }
-
     /*barre défilante*/
     if(started)
     {
@@ -186,10 +163,12 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
         step = 50;
         time.restart();
         if(!decompte)
+        {
             indice_essai++;
+            zone_coloree->setIndice_essai(indice_essai);
+        }
         if (decompte)
             decompte = false;
-        //qDebug("%d", indice_essai);
         indice_j = 1;
     }
 
@@ -200,6 +179,7 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
         started = false;
         step = 50;
         indice_essai = 1;
+        scrollArea->ensureVisible(0, 0);
 
         int j;
         for (j=0; j<indice_essai; j++)
@@ -222,68 +202,10 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
             tab_liste_jugee[j]->setDerniere(true);
             tab_liste_jugee[j]->setSuivante(NULL);
         }
-
+        zone_coloree->setTabListesJugees(tab_liste_jugee);
         indice_j = 1;
 
     }
-
-    /*écriture et coloration des notes jouées sur la mesure d'essais*/
-   if(!decompte)
-   {
-    int c;
-    int xn, yn;
-    painter.setPen(QPen(Qt::black, 10));
-    QPixmap image2;
-    QRectF source2(0, 0, 30, 58);
-    for(c=0; c<indice_essai; c++)
-    {
-        Note_jugee *liste_note = tab_liste_jugee[c];
-        while (!liste_note->estDerniere())
-        {
-            if ((liste_note->getTemps()+50 > 2000))
-            {
-                xn = liste_note->getTemps()/vitesse+50 - 500;
-                yn = 103 + (c+1)*75;
-            }
-            else
-            {
-                xn = liste_note->getTemps()/vitesse+50;
-                yn = 103 + c*75;
-            }
-
-            if(liste_note->getCorrecte())
-                image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_v.png");
-            if(!liste_note->getCorrecte())
-                image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_r.png");
-
-            if (!((liste_note->getTemps() == 0) && (liste_note->getSuivante() == NULL) && (liste_note->getCorrecte() == false)))
-                painter.drawPixmap(QRectF(xn, yn, 30, 58), image2, source2);
-            liste_note = liste_note->getSuivante();
-        }
-        if(!liste_note->estDefaut())
-        {
-            if ((liste_note->getTemps()+50 > 2000))
-            {
-                xn = liste_note->getTemps()/vitesse+50 - 500;
-                yn = 103 + (c+1)*75;
-            }
-            else
-            {
-                xn = liste_note->getTemps()/vitesse+50;
-                yn = 103 + c*75;
-            }
-
-            if(liste_note->getCorrecte())
-                image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_v.png");
-            if(!liste_note->getCorrecte())
-                image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_r.png");
-
-            if (!((liste_note->getTemps() == 0) && (liste_note->getSuivante() == NULL) && (liste_note->getCorrecte() == false)))
-                painter.drawPixmap(QRectF(xn, yn, 30, 58), image2, source2); //dessin de la derniere note jugee
-        }
-    }
-   }
-    //qDebug("fin : %d", time.elapsed());
 }
 
 void Sheet::timerEvent(QTimerEvent *event) //event envoyé tous les vitesse ms
@@ -292,7 +214,9 @@ void Sheet::timerEvent(QTimerEvent *event) //event envoyé tous les vitesse ms
     {
         step = time.elapsed()*500/2000+50;
         //qDebug("%d ; %d", step, time.elapsed());
-        update(); // pour que le widget s'update
+        update(); // pour que le widget s'update        
+        scrollArea->ensureVisible(0, 60+indice_essai*75);
+        zone_coloree->update();
     }
     else
     {
@@ -387,8 +311,56 @@ void Sheet::setMetronome()
 {
     if(metronome_active)
         metronome_active = false;
-    if(!metronome_active)
+    else
         metronome_active = true;
+}
+
+void Sheet::start()
+{
+    if(!started)
+    {
+        int j;
+        for (j=0; j<indice_essai; j++)
+        {
+            Note_jugee* note_int = tab_liste_jugee[j];
+            int k = 1;
+            int i;
+
+            while (!note_int->estDerniere())
+            {
+                note_int = note_int->getSuivante();
+                k++;
+            }
+            for (i=k; i>1; i--)
+            {
+                delete getNoteJugee(i-1, tab_liste_jugee[j])->getSuivante();
+            }
+            tab_liste_jugee[j]->setTemps(0);
+            tab_liste_jugee[j]->setCorrecte(false);
+            tab_liste_jugee[j]->setDerniere(true);
+            tab_liste_jugee[j]->setSuivante(NULL);
+        }
+
+        decompte = true;
+        indice_essai = 1;
+        zone_coloree->setIndice_essai(1);
+        indice_j = 1;
+        timer.start(vitesse, this);
+        time.start();
+        started = true;
+    }
+}
+
+void Sheet::stop()
+{
+    if(started)
+    {
+        timer.stop();
+        started = false;
+        step = 50;
+        qDebug("perf : %d", getPerformance());
+        decompte = false;
+    }
 }
 
 void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est pressée
@@ -430,7 +402,7 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
         }*/
 
         kick.play();
-        qDebug("t : %d ; p : %d", time.elapsed(), time.elapsed()/vitesse+50);
+        //qDebug("t : %d ; p : %d", time.elapsed(), time.elapsed()/vitesse+50);
 
         if (!(indice_j == 1))
             getNoteJugee(indice_j-1, tab_liste_jugee[indice_essai-1])->creer_suivante();
@@ -465,6 +437,8 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
 
         indice_j += 1;
 
+        zone_coloree->setTabListesJugees(tab_liste_jugee);
+
         /*Note_jugee* liste_int = tab_liste_jugee[0];
         while(!liste_int->estDerniere())
         {
@@ -481,42 +455,11 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
     {
         if(!started)
         {
-            int j;
-            for (j=0; j<indice_essai; j++)
-            {
-                Note_jugee* note_int = tab_liste_jugee[j];
-                int k = 1;
-                int i;
-
-                while (!note_int->estDerniere())
-                {
-                    note_int = note_int->getSuivante();
-                    k++;
-                }
-                for (i=k; i>1; i--)
-                {
-                    delete getNoteJugee(i-1, tab_liste_jugee[j])->getSuivante();
-                }
-                tab_liste_jugee[j]->setTemps(0);
-                tab_liste_jugee[j]->setCorrecte(false);
-                tab_liste_jugee[j]->setDerniere(true);
-                tab_liste_jugee[j]->setSuivante(NULL);
-            }
-
-            decompte = true;
-            indice_essai = 1;
-            indice_j = 1;
-            timer.start(vitesse, this);
-            time.start();
-            started = true;
+            start();
         }
         else
         {
-            timer.stop();
-            started = false;
-            step = 50;
-            qDebug("perf : %d", getPerformance());
-            decompte = false;
+            stop();
         }
 
     }
