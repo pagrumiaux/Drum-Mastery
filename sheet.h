@@ -5,14 +5,15 @@
 
 #include <QBasicTimer>
 #include <QWidget>
-#include <QPointF>
 #include <QTime>
 #include <QMediaPlayer>
 #include <QScrollArea>
 #include <QPixmap>
+#include <QHBoxLayout>
 
 #include "measure.h"
 #include "notes_jugees.h"
+#include "colored.h"
 
 class Sheet : public QWidget
 {
@@ -26,6 +27,8 @@ public:
     int getPerformance();
     QPixmap ImageOfNote(Note *note, char c);
     void setMetronome();
+    void start();
+    void stop();
 
 public slots:
 
@@ -37,7 +40,6 @@ protected:
 private:
     QBasicTimer timer; // timer
     QTime time; // timer
-    int position;
     int step;
     int vitesse; //vitesse de l'update
     int bpm; // battement par minute (tempo)
@@ -58,5 +60,10 @@ private:
     Note_jugee* tab_liste_jugee[10]; //tableau qui retient les notes jouées (jusqu'à 10 essais)
     int indice_j; //indice pour parcourir une liste de notes jugées
     int indice_essai; //indice pour parcourir le tableau des listes de notes jugées
+
+    Colored *zone_coloree;
+    QScrollArea *scrollArea;
+
+    QVBoxLayout *layoutV;
 };
 
