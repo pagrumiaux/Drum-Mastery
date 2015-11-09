@@ -48,6 +48,7 @@ private:
     bool started; //vrai si on est en train de jouer
     bool decompte; //vrai pour le décompte, faux une fois le décompte effectué
     bool metronome_active;
+    bool preecoute;
 
     QMediaPlayer kick;
     QMediaPlayer metronome;
