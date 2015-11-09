@@ -16,10 +16,11 @@ Sheet::Sheet(QWidget *parent)
     : QWidget(parent)
 {
     step = 50; //coordonnées en x du départ du curseur
-    vue = false;
+    vue = true;
     started = false;
     metronome_active = true;
     m_taille_mesure = 500;
+    preecoute = false;
 
     /*initialisation des listes de notes jugées*/
     int i;
@@ -62,9 +63,10 @@ Sheet::Sheet(QWidget *parent)
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scrollArea->setVisible(true);
 
-    layoutV = new QVBoxLayout;
-    layoutV->addWidget(this);
+    layoutV = new QVBoxLayout(this);
     layoutV->addWidget(scrollArea);
+    layoutV->insertSpacing(0, 100);
+    layoutV->setMargin(0);
 }
 
 void Sheet::paintEvent(QPaintEvent * /* event */)
@@ -88,10 +90,10 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
 
     /*affichage du décompte*/
     QString n_compte;
-    font.setPointSize(100);
+    font.setPointSize(60);
     painter.setPen(QPen(Qt::blue, 3));
     painter.setFont(font);
-    if(decompte && started)
+    if((decompte && started) && !preecoute)
     {
         if(0 <=time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse/4)
             n_compte.append(QString("%1").arg(4));
@@ -101,17 +103,37 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
             n_compte.append(QString("%1").arg(2));
         if(m_taille_mesure*vitesse*3/4 <=time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse*4/4)
             n_compte.append(QString("%1").arg(1));
-        painter.drawText(250,200, n_compte);
+        painter.drawText(250,70, n_compte);
     }
 
     /*lecture du metronome*/
     if(metronome_active)
     {
-        if ((0 <= time.elapsed() && time.elapsed() <=vitesse+1) || (m_taille_mesure*vitesse-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse+(floor(vitesse/2)+1)) || (m_taille_mesure*vitesse/4-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse/4+(floor(vitesse/2)+1))
-                || (m_taille_mesure*vitesse*2/4-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse*2/4+(floor(vitesse/2)+1)) || (m_taille_mesure*vitesse*3/4-(floor(vitesse/2)+1) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse*3/4+(floor(vitesse/2)+1)))
+        if ((0 <= time.elapsed() && time.elapsed() <=vitesse+3) || (m_taille_mesure*vitesse-(floor(vitesse/2)+3) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse+(floor(vitesse/2)+3)) || (m_taille_mesure*vitesse/4-(floor(vitesse/2)+3) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse/4+(floor(vitesse/2)+3))
+                || (m_taille_mesure*vitesse*2/4-(floor(vitesse/2)+3) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse*2/4+(floor(vitesse/2)+3)) || (m_taille_mesure*vitesse*3/4-(floor(vitesse/2)+3) <= time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse*3/4+(floor(vitesse/2)+3)))
         {
-            metronome.play();
+            if(started)
+                metronome.play();
             qDebug("m : %d", time.elapsed());
+        }
+    }
+    qDebug("t : %d", time.elapsed());
+
+    /*préécoute*/
+    if(preecoute)
+    {
+        Note* liste_note_pre;
+        liste_note_pre = m_mesure.getNote();
+        int cumul = liste_note_pre->getValeur();
+        kick.play();
+        while(!liste_note_pre->estDerniere())
+        {
+            if(time.elapsed() >= vitesse * m_taille_mesure * cumul - 10 && time.elapsed() <= vitesse * m_taille_mesure * cumul - 10)
+            {
+                kick.play();
+                liste_note_pre = liste_note_pre->getSuivante();
+                cumul += liste_note_pre->getValeur();
+            }
         }
     }
 
@@ -160,16 +182,21 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     /*pour revenir au début et commencer un nouvel essai*/
     if(time.elapsed() >= vitesse*m_taille_mesure)
     {
-        step = 50;
-        time.restart();
-        if(!decompte)
+        if(preecoute)
+            stop();
+        else
         {
-            indice_essai++;
-            zone_coloree->setIndice_essai(indice_essai);
+            step = 50;
+            time.restart();
+            if(!decompte)
+            {
+                indice_essai++;
+                zone_coloree->setIndice_essai(indice_essai);
+            }
+            if (decompte)
+                decompte = false;
+            indice_j = 1;
         }
-        if (decompte)
-            decompte = false;
-        indice_j = 1;
     }
 
     /*quand on a fini les 10 essais, ça s'arrête, et on remet tout à 0*/
@@ -203,9 +230,11 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
             tab_liste_jugee[j]->setSuivante(NULL);
         }
         zone_coloree->setTabListesJugees(tab_liste_jugee);
+        zone_coloree->setIndice_essai(indice_essai);
         indice_j = 1;
-
     }
+
+    preecoute = false;
 }
 
 void Sheet::timerEvent(QTimerEvent *event) //event envoyé tous les vitesse ms
@@ -463,5 +492,9 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
         }
 
     }
-
+    if(event->key() == Qt::Key_P)
+    {
+        preecoute = true;
+        start();
+    }
 }
