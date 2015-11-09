@@ -4,6 +4,7 @@
 #include "sheet.h"
 #include "note.h"
 #include "measure.h"
+#include "colored.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,22 +12,13 @@ int main(int argc, char *argv[])
 
     Sheet *sheet = new Sheet(0);
     sheet->setFixedWidth(600);
-    sheet->setMinimumHeight(1000);
-    QScrollArea *scrollArea = new QScrollArea;
+    /*QScrollArea *scrollArea = new QScrollArea;
 
     scrollArea->setWidget(sheet);
     scrollArea->setFixedWidth(600);
-    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //scrollArea->ensureVisible(0, 500);
-
-    sheet->setFocus();
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);*/
     sheet->show();
-    scrollArea->show();
-
-
-    /*Sheet sheet(0);
-    sheet.setFixedSize(500,250);
-    sheet.show();*/
+    //scrollArea->show();
 
     return app.exec();
 }
