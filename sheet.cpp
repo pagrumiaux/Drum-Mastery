@@ -498,3 +498,18 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
         start();
     }
 }
+
+void Sheet::setKickVolume(int position)
+    {
+        kick.setVolume(position);
+    }
+
+void Sheet::setMetronomeVolume(int position)
+    {
+        metronome.setVolume(position);
+    }
+
+bool Sheet::getStarted ()
+    {
+        return started;
+    }
