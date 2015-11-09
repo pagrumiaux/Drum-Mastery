@@ -29,6 +29,9 @@ public:
     void setMetronome();
     void start();
     void stop();
+    void setMetronomeVolume(int position);
+    void setKickVolume(int position);
+    bool getStarted();
 
 public slots:
 
