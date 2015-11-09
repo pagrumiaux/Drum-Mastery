@@ -55,13 +55,13 @@ void Colored::paintEvent(QPaintEvent * /* event */)
             int x = 50;
             Note *note_int = m_mesure.getNote(); //note intermédiaire pour parcourir la liste de notes
             float valeur_prec = note_int->getValeur(); //retient en mémoire la valeur de la note d'avant
-            painter.drawPixmap(QRectF(x, 103+75*b, 30, 58), QPixmap("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_g.png"), source);
+            painter.drawPixmap(QRectF(x, 13+75*b, 30, 58), QPixmap("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_g.png"), source);
 
             while (note_int->estDerniere() != true)
             {
                 x += valeur_prec*m_taille_mesure;
                 note_int = note_int->getSuivante();
-                painter.drawPixmap(QRectF(x, 103+75*b, 30, 58), ImageOfNote(note_int, 'g'), source);
+                painter.drawPixmap(QRectF(x, 13+75*b, 30, 58), ImageOfNote(note_int, 'g'), source);
                 valeur_prec = note_int->getValeur();
             }
         }
@@ -81,7 +81,10 @@ void Colored::paintEvent(QPaintEvent * /* event */)
             if ((liste_note->getTemps()+50 > 2000))
             {
                 xn = liste_note->getTemps()/vitesse+50 - 500;
-                yn = 13 + (c+1)*75;
+                if(indice_essai == 1)
+                    yn = 13 + c*75;
+                else
+                    yn = 13 + (c+1)*75;
             }
             else
             {
