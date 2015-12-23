@@ -7,6 +7,7 @@ Measure::Measure()
     m_n = 4;
     m_u = 4;
     m_note_1 = NULL;
+    estDerniere = true;
 }
 
 Measure::Measure(int n, int u)
@@ -14,6 +15,7 @@ Measure::Measure(int n, int u)
     m_n = n;
     m_u = u;
     m_note_1 = NULL;
+    estDerniere = true;
 }
 
 Measure::Measure(int n, int u, Note *note)
@@ -21,6 +23,7 @@ Measure::Measure(int n, int u, Note *note)
     m_n = n;
     m_u = u;
     m_note_1 = note;
+    estDerniere = true;
 }
 
 void Measure::setN(int n)
@@ -28,9 +31,19 @@ void Measure::setN(int n)
     m_n = n;
 }
 
+int Measure::getN()
+{
+    return m_n;
+}
+
 void Measure::setU(int u)
 {
     m_u = u;
+}
+
+int Measure::getU()
+{
+    return m_u;
 }
 
 void Measure::setNote(Note *note)
@@ -46,7 +59,7 @@ Note* Measure::getNote()
 bool Measure::est_valable() const
 {
     Note *note_int = m_note_1;
-    float somme = .0;
+    double somme = .0;
     while (note_int->estDerniere() != true)
     {
         somme += note_int->getValeur();
@@ -58,4 +71,21 @@ bool Measure::est_valable() const
         return true;
     else
         return false;
+}
+
+void Measure::creerSuivante()
+{
+    Measure *mesure = new Measure(m_n, m_u);
+    mesure_suivante = mesure;
+    estDerniere = false;
+}
+
+Measure *Measure::getSuivante()
+{
+    return mesure_suivante;
+}
+
+bool Measure::getDerniere()
+{
+    return estDerniere;
 }
