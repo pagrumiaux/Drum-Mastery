@@ -6,9 +6,10 @@ Note::Note()
     m_type = 0;
     m_valeur = 0;
     m_suivante = NULL;
+    derniere = true;
 }
 
-Note::Note(int type, float valeur)
+Note::Note(int type, double valeur)
 {
     if ((type == 0) || (type = 1))
         m_type = type;
@@ -19,7 +20,7 @@ Note::Note(int type, float valeur)
     derniere = true;
 }
 
-Note::Note(int type, float valeur, Note *suivante)
+Note::Note(int type, double valeur, Note *suivante)
 {
     if ((type == 0) || (type = 1))
         m_type = type;
@@ -46,7 +47,7 @@ void Note::suppr_suivantes()
     derniere = true;
 }
 
-float Note::getValeur()
+double Note::getValeur()
 {
     return m_valeur;
 }
