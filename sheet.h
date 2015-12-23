@@ -10,6 +10,7 @@
 #include <QScrollArea>
 #include <QPixmap>
 #include <QHBoxLayout>
+#include <QFile>
 
 #include "measure.h"
 #include "notes_jugees.h"
@@ -29,9 +30,9 @@ public:
     void setMetronome();
     void start();
     void stop();
-    void setMetronomeVolume(int position);
-    void setKickVolume(int position);
-    bool getStarted();
+    void save();
+    void load(QTextStream *text);
+    double CharToInt(QChar c);
 
 public slots:
 
@@ -59,7 +60,9 @@ private:
     int performance; //indice de performance
 
     int m_taille_mesure; // taille d'une mesure en pixel
-    Measure m_mesure;
+    int nbre_mesures;
+    Measure *m_mesure;
+    int mesure_actuelle;
 
     Note_jugee* tab_liste_jugee[10]; //tableau qui retient les notes jouées (jusqu'à 10 essais)
     int indice_j; //indice pour parcourir une liste de notes jugées
