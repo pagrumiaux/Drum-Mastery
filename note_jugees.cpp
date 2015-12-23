@@ -11,7 +11,7 @@ Note_jugee::Note_jugee()
 
 bool Note_jugee::estDefaut()
 {
-    if((m_temps_joue == 0) && (m_est_correcte = false) && (m_note_suivante == NULL) && (m_derniere == true))
+    if((m_temps_joue == 0) && !m_est_correcte && (m_note_suivante == NULL) && (m_derniere == true))
         return true;
     else
         return false;
