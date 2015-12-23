@@ -13,15 +13,18 @@ class Colored : public QWidget
     Q_OBJECT
 
 public:
-    Colored(QWidget *parent, int taille_mesure, Note_jugee* tab_liste_jugee[10], Measure mesure, int vit);
+    Colored(QWidget *parent, int taille_mesure, Note_jugee* tab_liste_jugee[10], Measure *mesure, int vit, int nb_mesure);
     Note_jugee* getNoteJugee(int numero, Note_jugee* premiere_note);
     QPixmap ImageOfNote(Note *note, char c);
 
     void setIndice_essai(int indice);
     int getIndice_essai();
+    void setNbMesure(int nb);
 
     void setTabListesJugees(Note_jugee* t_liste_jugee[]);
     Note_jugee* getTabListesJugees();
+
+    void setStarted(bool v);
 
 public slots:
 
@@ -31,10 +34,12 @@ protected:
 private:
 
     bool vue; //vrai si on veut avoir la vue
+    bool started;
 
     int m_taille_mesure; // taille d'une mesure en pixel
     int vitesse;
-    Measure m_mesure;
+    Measure *m_mesure;
+    int nbre_mesure;
 
     Note_jugee* tab_liste_jugee[10]; //tableau qui retient les notes jouées (jusqu'à 10 essais)
     int indice_j; //indice pour parcourir une liste de notes jugées
