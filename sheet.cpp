@@ -32,9 +32,9 @@ Sheet::Sheet(QWidget *parent)
     indice_essai = 1;
 
     /*initialisation du son*/
-    const QString filePath = "C:/Users/P-A/Documents/Drum Mastery/kick2.wav";
+    const QString filePath = "C:/Users/PA/Documents/Drum Mastery/kick2.wav";
     kick.setMedia(QUrl::fromLocalFile(filePath));
-    const QString filePath2 = "C:/Users/P-A/Documents/Drum Mastery/metronome2.wav";
+    const QString filePath2 = "C:/Users/PA/Documents/Drum Mastery/metronome2.wav";
     metronome.setMedia(QUrl::fromLocalFile(filePath2));
 
     bpm = 120; //on travaille en 4/4 pour l'instant
@@ -48,7 +48,7 @@ Sheet::Sheet(QWidget *parent)
 
     /*mise en place de la zone coloree*/
     zone_coloree = new Colored(0, m_taille_mesure, tab_liste_jugee, m_mesure, vitesse, nbre_mesures);
-    zone_coloree->setMinimumSize(1100, (nbre_mesures > 2)? 1255 : 760);
+    zone_coloree->setMinimumSize(1100, (nbre_mesures > 2)? 1555 : 760);
     scrollArea = new QScrollArea;
     scrollArea->setWidget(zone_coloree);
     scrollArea->setFixedWidth(1100);
@@ -69,16 +69,12 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     //qDebug("début : %d", time.elapsed());
 
     /*affichage pourcentage + numero essai*/
-    QString p, q;
+    QString p;
     p.append(QString("%1%").arg(getPerformance()));
-    q.append(QString("essai : %1").arg(getIndice_essai()));
     QFont font = painter.font();
     font.setPointSize(20);
     painter.setFont(font);
     painter.drawText(10, 25, p);
-    font.setPointSize(10);
-    painter.setFont(font);
-    painter.drawText(55, 20, q);
 
     /*affichage du décompte*/
     QString n_compte;
@@ -257,6 +253,7 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     if(decompte && time.elapsed() >= vitesse*m_taille_mesure)
     {
         decompte = false;
+        zone_coloree->setDecompte(false);
         time.restart();
     }
 
@@ -264,7 +261,9 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     if(time.elapsed() >= vitesse*m_taille_mesure*nbre_mesures && indice_essai < 10)
     {
         if(preecoute)
+        {
             stop();
+        }
         else
         {
             time.restart();
@@ -283,10 +282,9 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     /*quand on a fini les 10 essais, ça s'arrête, et on remet tout à 0*/
     if((indice_essai >= 10) && (time.elapsed() > vitesse*m_taille_mesure*nbre_mesures))
     {
-        timer.stop();
         started = false;
-        zone_coloree->setStarted(false);
         step = 50 + 16;
+        zone_coloree->setStarted(false);
         scrollArea->ensureVisible(0, 0);
     }
 
@@ -320,32 +318,32 @@ QPixmap Sheet::ImageOfNote(Note *note, char c)
     if(c == 'n')
     {
         if (i == 1.0)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/ronde_n.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/ronde_n.png");
         if (i == 0.5)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/blanche_n.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/blanche_n.png");
         if (i == 0.25)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_n.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_n.png");
         if (i == 0.125)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/croche_n.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/croche_n.png");
         if (i == 0.0625)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/double_croche_n.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/double_croche_n.png");
         if (i == 0.03125)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/triple_croche_n.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/triple_croche_n.png");
     }
     if(c == 'g')
     {
         if (i == 1.0)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/ronde_g.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/ronde_g.png");
         if (i == 0.5)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/blanche_g.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/blanche_g.png");
         if (i == 0.25)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_g.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_g.png");
         if (i == 0.125)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/croche_g.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/croche_g.png");
         if (i == 0.0625)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/double_croche_g.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/double_croche_g.png");
         if (i == 0.03125)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/triple_croche_g.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/triple_croche_g.png");
     }
 
     return pix;
@@ -359,7 +357,7 @@ int Sheet::getIndice_essai()
 int Sheet::getPerformance()
 {
     int nbreVert = 0;
-    int nbreTotal =0;
+    int nbreTotal = 0;
     int i;
     Note_jugee *liste_note;
     for(i=0; i<indice_essai; i++)
@@ -372,11 +370,17 @@ int Sheet::getPerformance()
                 nbreVert++;
             liste_note = liste_note->getSuivante();
         }
-        nbreTotal++;
-        if(liste_note->getCorrecte())
-            nbreVert++;
+        if(!liste_note->estDefaut())
+        {
+            nbreTotal++;
+            if(liste_note->getCorrecte())
+                nbreVert++;
+        }
     }
-    performance = nbreVert*100/nbreTotal;
+    if (nbreTotal != 0)
+        performance = nbreVert*100/nbreTotal;
+    else performance = 0;
+
     return performance;
 }
 
@@ -430,7 +434,6 @@ void Sheet::start()
             tab_liste_jugee[j]->setSuivante(NULL);
         }
 
-
         indice_essai = 1;
         zone_coloree->setIndice_essai(1);
         indice_j = 1;
@@ -442,6 +445,7 @@ void Sheet::start()
             zone_coloree->setStarted(true);
         }
         decompte = true;
+        zone_coloree->setDecompte(true);
     }
 }
 
@@ -451,8 +455,10 @@ void Sheet::stop()
     {
         timer.stop();
         started = false;
+        zone_coloree->setStarted(false);
         step = 50;
         decompte = false;
+        scrollArea->ensureVisible(0, 0);
     }
 }
 
@@ -460,30 +466,61 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
 {
     int temps_tape = time.elapsed();
 
-    if (event->key() == Qt::Key_Space) // quand on tape sur la touche espace
+    if (event->key() == Qt::Key_Space && !((indice_essai == 10) && (time.elapsed() + vitesse*16 >= 2000*nbre_mesures))) // quand on tape sur la touche espace
     {
-if(started) {
-        kick.play();
-        qDebug("%d", temps_tape);
+        int a;
+        Note_jugee* note_aff;
+        for(a=0; a<indice_essai; a++)
+        {
+            note_aff = tab_liste_jugee[a];
+            qDebug("essai : %d", a);
+            while(!note_aff->estDerniere())
+            {
+                qDebug("%d", note_aff->getTemps());
+                note_aff = note_aff->getSuivante();
+            }
+        }
+        qDebug(" ");
 
+        kick.play();
+
+        /*si on est la première note mais qu'elle est déjà modifiée, on passe à la suivante*/
         if(indice_j == 1 && !tab_liste_jugee[indice_essai-1]->estDefaut())
             indice_j++;
 
+        /*si on est pas à la première note, on demande à celle d'avant d'en créer une nouvelle*/
         if (!(indice_j == 1))
-            getNoteJugee((temps_tape + vitesse*16 > 2000*nbre_mesures && started) ? 1 : indice_j-1, tab_liste_jugee[(temps_tape + vitesse*16 > 2000*nbre_mesures) ? indice_essai : indice_essai-1])->creer_suivante();
+        {
+            getNoteJugee(indice_j-1, tab_liste_jugee[indice_essai-1])->creer_suivante();
+        }
 
-        getNoteJugee((temps_tape + vitesse*16 > 2000*nbre_mesures && started) ? 1 : indice_j, tab_liste_jugee[(temps_tape + vitesse*16 > 2000*nbre_mesures) ? indice_essai : indice_essai-1])->setTemps(temps_tape);
+        /*on sauvegarde le temps auquel on a tapé*/
+        if((temps_tape + vitesse*16 >= 2000*nbre_mesures && started))
+        {
+            if(indice_essai == 1 && decompte)
+                getNoteJugee(1, tab_liste_jugee[0])->setTemps(temps_tape);
+            else if(indice_essai == 1 && !getNoteJugee(1, tab_liste_jugee[0])->estDefaut())
+                getNoteJugee(1, tab_liste_jugee[1])->setTemps(temps_tape);
+            else
+                getNoteJugee(1, tab_liste_jugee[indice_essai])->setTemps(temps_tape);
+        }
+        else
+            getNoteJugee(indice_j, tab_liste_jugee[indice_essai-1])->setTemps(temps_tape);
 
         Measure *mesure_int = m_mesure;
         Note *note_int = m_mesure->getNote()->getSuivante();
         float temps_cumule = 0;
         bool ok;
-        while (temps_cumule + 20 < temps_tape)
+        while (temps_cumule + 30 <= (temps_tape % 2000*nbre_mesures))
         {
-            qDebug("temps cumule : %f", temps_cumule);
-            if(abs(temps_tape - temps_cumule) < 30)
+            if(abs((temps_tape % 2000) - temps_cumule) <= 30)
             {
-                getNoteJugee((temps_tape + vitesse*16 > 2000*nbre_mesures && started) ? 1 : indice_j, tab_liste_jugee[(temps_tape + vitesse*16 > 2000*nbre_mesures) ? indice_essai : indice_essai-1])->setCorrecte(true);
+                if(temps_tape + vitesse*16 >= 2000*nbre_mesures && started && !decompte)
+                    getNoteJugee(1, tab_liste_jugee[indice_essai])->setCorrecte(true);
+                else if(temps_tape + vitesse*16 >= 2000*nbre_mesures && started && decompte)
+                    getNoteJugee(1, tab_liste_jugee[indice_essai-1])->setCorrecte(true);
+                else
+                    getNoteJugee(indice_j, tab_liste_jugee[indice_essai-1])->setCorrecte(true);
                 ok = true;
             }
             temps_cumule += note_int->getValeur()*m_taille_mesure*float(vitesse);
@@ -495,15 +532,25 @@ if(started) {
                 note_int = mesure_int->getNote();
             }
         }
-        if(abs(temps_tape - temps_cumule) < 30)
+        if(abs((temps_tape % 2000) - temps_cumule) <= 30)
         {
-            getNoteJugee((temps_tape + vitesse*16 > 2000*nbre_mesures && started) ? 1 : indice_j, tab_liste_jugee[(temps_tape + vitesse*16 > 2000*nbre_mesures) ? indice_essai : indice_essai-1])->setCorrecte(true);
+            if(temps_tape + vitesse*16 >= 2000*nbre_mesures && started && !decompte)
+                getNoteJugee(1, tab_liste_jugee[indice_essai])->setCorrecte(true);
+            else if(temps_tape + vitesse*16 >= 2000*nbre_mesures && started && decompte)
+                getNoteJugee(1, tab_liste_jugee[indice_essai-1])->setCorrecte(true);
+            else
+                getNoteJugee(indice_j, tab_liste_jugee[indice_essai-1])->setCorrecte(true);
             ok = true;
         }
 
         if(!ok)
         {
-            getNoteJugee((temps_tape + vitesse*16 > 2000*nbre_mesures && indice_essai != 1) ? 1 : indice_j, tab_liste_jugee[(temps_tape + vitesse*16 > 2000*nbre_mesures) ? indice_essai : indice_essai-1])->setCorrecte(false);
+            if(temps_tape + vitesse*16 >= 2000*nbre_mesures && started && !decompte)
+                getNoteJugee(1, tab_liste_jugee[indice_essai])->setCorrecte(false);
+            else if(temps_tape + vitesse*16 >= 2000*nbre_mesures && started && decompte)
+                getNoteJugee(1, tab_liste_jugee[indice_essai-1])->setCorrecte(false);
+            else
+                getNoteJugee(indice_j, tab_liste_jugee[indice_essai-1])->setCorrecte(false);
         }
 
         indice_j += 1;
@@ -512,7 +559,6 @@ if(started) {
         update(); //idem, update du widget
 
     }
-}
     if(event->key() == Qt::Key_Alt)
     {
         if(!started)
@@ -530,9 +576,7 @@ if(started) {
         preecoute = true;
         start();
     }
-    if(event->key() == Qt::Key_S)
-        save();
-    if(event->key() == Qt::Key_1)
+    if(event->key() == Qt::Key_A)
     {
         QFile file("simple1.dm");
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -540,7 +584,7 @@ if(started) {
         QTextStream text(&file);
         load(&text);
     }
-    if(event->key() == Qt::Key_2)
+    if(event->key() == Qt::Key_Z)
     {
         QFile file("simple2.dm");
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -548,7 +592,7 @@ if(started) {
         QTextStream text(&file);
         load(&text);
     }
-    if(event->key() == Qt::Key_3)
+    if(event->key() == Qt::Key_E)
     {
         QFile file("simple3.dm");
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -556,7 +600,7 @@ if(started) {
         QTextStream text(&file);
         load(&text);
     }
-    if(event->key() == Qt::Key_4)
+    if(event->key() == Qt::Key_R)
     {
         QFile file("simple4.dm");
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -564,7 +608,7 @@ if(started) {
         QTextStream text(&file);
         load(&text);
     }
-    if(event->key() == Qt::Key_5)
+    if(event->key() == Qt::Key_T)
     {
         QFile file("test2.dm");
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -572,7 +616,7 @@ if(started) {
         QTextStream text(&file);
         load(&text);
     }
-    if(event->key() == Qt::Key_6)
+    if(event->key() == Qt::Key_Y)
     {
         QFile file("test3.dm");
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -639,7 +683,10 @@ double Sheet::CharToInt(QChar c)
         return 0.0625;
     if(c == 't')
         return 0.03125;
+
+    return 0;
 }
+
 void Sheet::load(QTextStream *text)
 {
     QString contenu;
@@ -671,4 +718,5 @@ void Sheet::load(QTextStream *text)
         mesure_int = mesure_int->getSuivante();
     }
     update();
+    zone_coloree->setMinimumSize(1100, (nbre_mesures > 2)? 1255 : 760);
 }
