@@ -29,8 +29,6 @@ void Colored::paintEvent(QPaintEvent * /* event */)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    //qDebug("début : %d", time.elapsed());
-
     /*mesure d'essais*/
     int a;
     if(nbre_mesure == 1)
@@ -45,6 +43,14 @@ void Colored::paintEvent(QPaintEvent * /* event */)
             painter.drawLine(m_taille_mesure/4 + 300, 50+a*75, m_taille_mesure/4 + 300, 70+a*75);// barre de mesure
             painter.drawLine(2*m_taille_mesure/4 + 300, 50+a*75, 2*m_taille_mesure/4 + 300, 70+a*75);// barre de mesure
             painter.drawLine(3*m_taille_mesure/4 + 300, 50+a*75, 3*m_taille_mesure/4 + 300, 70+a*75);// barre de mesure
+
+            QString p;
+            p.append(QString("%1").arg(a+1));
+            painter.setPen(QPen(Qt::blue, 3));
+            QFont font = painter.font();
+            font.setPointSize(25);
+            painter.setFont(font);
+            painter.drawText(265, 70+a*75, p);
         }
     }
     if (nbre_mesure == 2)
@@ -71,6 +77,14 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                     painter.drawLine(i*m_taille_mesure/4 + 50, 50+a*75, i*m_taille_mesure/4 + 50, 70+a*75);// barre de mesure
                 }
             }
+
+            QString p;
+            p.append(QString("%1").arg(a+1));
+            painter.setPen(QPen(Qt::blue, 3));
+            QFont font = painter.font();
+            font.setPointSize(25);
+            painter.setFont(font);
+            painter.drawText(15, 70+a*75, p);
         }
     }
     if(nbre_mesure > 2)
@@ -104,6 +118,14 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                     painter.drawLine(i*m_taille_mesure/4 + 50, 100+a*125, i*m_taille_mesure/4 + 50, 120+a*125);// barres de mesure 2
                 }
             }
+
+            QString p;
+            p.append(QString("%1").arg(a+1));
+            painter.setPen(QPen(Qt::blue, 3));
+            QFont font = painter.font();
+            font.setPointSize(25);
+            painter.setFont(font);
+            painter.drawText(15, 95+a*75, p);
         }
     }
 
@@ -148,7 +170,6 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 if ((liste_note->getTemps()+vitesse*16 > 2000*nbre_mesure))
                 {
                     xn = liste_note->getTemps()/vitesse+50 + 250 - m_taille_mesure;
-
                     yn = 13 + c*75;
                 }
                 else
@@ -158,9 +179,9 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 }
 
                 if(liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_v.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_v.png");
                 if(!liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_r.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_r.png");
 
                 if (!liste_note->estDefaut())
                 {
@@ -174,10 +195,7 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 if ((liste_note->getTemps()+vitesse*16 > 2000*nbre_mesure))
                 {
                     xn = liste_note->getTemps()/vitesse+50 + 250 - m_taille_mesure;
-                    if(indice_essai == 1)
-                        yn = 13 + c*75;
-                    else
-                        yn = 13 + (c+1)*75;
+                    yn = 13 + c*75;
                 }
                 else
                 {
@@ -186,9 +204,9 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 }
 
                 if(liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_v.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_v.png");
                 if(!liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_r.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_r.png");
 
                 if (!((liste_note->getTemps() == 0) && (liste_note->getSuivante() == NULL) && (liste_note->getCorrecte() == false)))
                 {
@@ -200,18 +218,20 @@ void Colored::paintEvent(QPaintEvent * /* event */)
         break;
 
     case 2 :
-        for(c=(indice_essai > 2) ? indice_essai - 2 : 0; c<indice_essai; c++)
+        for(c=(indice_essai > 2 && started) ? indice_essai - 2 : 0; c<indice_essai; c++)
         {
             Note_jugee *liste_note = tab_liste_jugee[c];
             while (!liste_note->estDerniere())
             {
-                if ((liste_note->getTemps()+vitesse*16 > 2000*nbre_mesure))
+                if(c == 0 && liste_note == getNoteJugee(1, tab_liste_jugee[0]) && liste_note->getTemps()+vitesse*16 > 2000)
+                {
+                    xn = liste_note->getTemps()/vitesse+50 - m_taille_mesure;
+                    yn = 13 + c*75;
+                }
+                else if ((liste_note->getTemps()+vitesse*16 > 2000*nbre_mesure))
                 {
                     xn = liste_note->getTemps()/vitesse+50 - 2*m_taille_mesure;
-                    if(indice_essai == 1)
-                        yn = 13 + c*75;
-                    else
-                        yn = 13 + (c+1)*75;
+                    yn = 13 + c*75;
                 }
                 else
                 {
@@ -220,26 +240,28 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 }
 
                 if(liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_v.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_v.png");
                 if(!liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_r.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_r.png");
 
                 if (!((liste_note->getTemps() == 0) && (liste_note->getSuivante() == NULL) && (liste_note->getCorrecte() == false)))
                 {
-                    qDebug("xn : %d, temps : %d", xn, liste_note->getTemps());
+                    qDebug("xn : %d, yn : %d, temps : %d", xn, yn, liste_note->getTemps());
                     painter.drawPixmap(QRectF(xn, yn, 30, 58), image2, source2);
                 }
                 liste_note = liste_note->getSuivante();
             }
             if(!liste_note->estDefaut())
             {
-                if ((liste_note->getTemps()+vitesse*16 > 2000*nbre_mesure))
+                if(liste_note == getNoteJugee(1, tab_liste_jugee[0]) && liste_note->getTemps()+vitesse*16 > 2000*nbre_mesure)
+                {
+                    xn = liste_note->getTemps()/vitesse+50 - m_taille_mesure;
+                    yn = 13 + c*75;
+                }
+                else if ((liste_note->getTemps()+vitesse*16 > 2000*nbre_mesure))
                 {
                     xn = liste_note->getTemps()/vitesse+50 - 2*m_taille_mesure;
-                    if(indice_essai == 1)
-                        yn = 13 + c*75;
-                    else
-                        yn = 13 + (c+1)*75;
+                    yn = 13 + c*75;
                 }
                 else
                 {
@@ -248,13 +270,13 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 }
 
                 if(liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_v.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_v.png");
                 if(!liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_r.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_r.png");
 
                 if (!((liste_note->getTemps() == 0) && (liste_note->getSuivante() == NULL) && (liste_note->getCorrecte() == false)))
                 {
-                    qDebug("xn : %d, temps : %d", xn, liste_note->getTemps());
+                    qDebug("xn : %d, yn : %d, temps : %d", xn, yn, liste_note->getTemps());
                     painter.drawPixmap(QRectF(xn, yn, 30, 58), image2, source2); //dessin de la derniere note jugee
                 }
             }
@@ -262,7 +284,7 @@ void Colored::paintEvent(QPaintEvent * /* event */)
         break;
 
     case 3 :
-        for(c=(indice_essai > 2) ? indice_essai - 2 : 0; c<indice_essai; c++)
+        for(c=(indice_essai > 2 && started) ? indice_essai - 2 : 0; c<indice_essai; c++)
         {
             Note_jugee *liste_note = tab_liste_jugee[c];
             while (!liste_note->estDerniere())
@@ -270,10 +292,7 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 if ((liste_note->getTemps()+vitesse*16 > 2000*nbre_mesure))
                 {
                     xn = liste_note->getTemps()/vitesse+50 - 3*m_taille_mesure;
-                    if(indice_essai == 1)
-                        yn = 13 + c*125;
-                    else
-                        yn = 13 + (c+1)*125;
+                    yn = 13 + c*125;
                 }
                 else
                 {
@@ -288,13 +307,13 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 }
 
                 if(liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_v.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_v.png");
                 if(!liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_r.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_r.png");
 
                 if (!((liste_note->getTemps() == 0) && (liste_note->getSuivante() == NULL) && (liste_note->getCorrecte() == false)))
                 {
-                    qDebug("xn : %d, temps : %d", xn, liste_note->getTemps());
+                    qDebug("xn : %d, yn : %d, temps : %d", xn, yn, liste_note->getTemps());
                     painter.drawPixmap(QRectF(xn, yn, 30, 58), image2, source2);
                 }
                 liste_note = liste_note->getSuivante();
@@ -304,10 +323,7 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 if ((liste_note->getTemps()+vitesse*16 > 2000*nbre_mesure))
                 {
                     xn = liste_note->getTemps()/vitesse+50 - 2*m_taille_mesure;
-                    if(indice_essai == 1)
-                        yn = 13 + c*125;
-                    else
-                        yn = 13 + (c+1)*125;
+                    yn = 13 + c*125;
                 }
                 else
                 {
@@ -321,9 +337,9 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 }
 
                 if(liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_v.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_v.png");
                 if(!liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_r.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_r.png");
 
                 if (!((liste_note->getTemps() == 0) && (liste_note->getSuivante() == NULL) && (liste_note->getCorrecte() == false)))
                 {
@@ -335,7 +351,7 @@ void Colored::paintEvent(QPaintEvent * /* event */)
         break;
 
     case 4 :
-        for(c=(indice_essai > 2) ? indice_essai - 2 : 0; c<indice_essai; c++)
+        for(c=(indice_essai > 2 && started) ? indice_essai - 2 : 0; c<indice_essai; c++)
         {
             Note_jugee *liste_note = tab_liste_jugee[c];
             while (!liste_note->estDerniere())
@@ -343,10 +359,7 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 if ((liste_note->getTemps()+vitesse*16 > 2000*nbre_mesure))
                 {
                     xn = liste_note->getTemps()/vitesse+50 - 4*m_taille_mesure;
-                    if(indice_essai == 1)
-                        yn = 13 + c*125;
-                    else
-                        yn = 13 + (c+1)*125;
+                    yn = 13 + c*125;
                 }
                 else
                 {
@@ -360,9 +373,9 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 }
 
                 if(liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_v.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_v.png");
                 if(!liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_r.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_r.png");
 
                 if (!((liste_note->getTemps() == 0) && (liste_note->getSuivante() == NULL) && (liste_note->getCorrecte() == false)))
                 {
@@ -376,10 +389,7 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 if ((liste_note->getTemps()+vitesse*16 > 2000*nbre_mesure))
                 {
                     xn = liste_note->getTemps()/vitesse+50 - 4*m_taille_mesure;
-                    if(indice_essai == 1)
-                        yn = 13 + c*125;
-                    else
-                        yn = 13 + (c+1)*125;
+                    yn = 13 + c*125;
                 }
                 else
                 {
@@ -393,9 +403,9 @@ void Colored::paintEvent(QPaintEvent * /* event */)
                 }
 
                 if(liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_v.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_v.png");
                 if(!liste_note->getCorrecte())
-                    image2.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_r.png");
+                    image2.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_r.png");
 
                 if (!((liste_note->getTemps() == 0) && (liste_note->getSuivante() == NULL) && (liste_note->getCorrecte() == false)))
                 {
@@ -418,32 +428,32 @@ QPixmap Colored::ImageOfNote(Note *note, char c)
     if(c == 'n')
     {
         if (i == 1.0)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/ronde_n.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/ronde_n.png");
         if (i == 0.5)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/blanche_n.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/blanche_n.png");
         if (i == 0.25)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_n.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_n.png");
         if (i == 0.125)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/croche_n.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/croche_n.png");
         if (i == 0.0625)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/double_croche_n.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/double_croche_n.png");
         if (i == 0.03125)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/triple_croche_n.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/triple_croche_n.png");
     }
     if(c == 'g')
     {
         if (i == 1.0)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/ronde_g.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/ronde_g.png");
         if (i == 0.5)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/blanche_g.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/blanche_g.png");
         if (i == 0.25)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/noire_g.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_g.png");
         if (i == 0.125)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/croche_g.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/croche_g.png");
         if (i == 0.0625)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/double_croche_g.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/double_croche_g.png");
         if (i == 0.03125)
-            pix.load("C:/Users/P-A/Documents/Drum Mastery/Images/Notes/triple_croche_g.png");
+            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/triple_croche_g.png");
     }
 
     return pix;
@@ -457,6 +467,11 @@ void Colored::setIndice_essai(int indice)
 void Colored::setStarted(bool v)
 {
     started = v;
+}
+
+void Colored::setDecompte(bool d)
+{
+    decompte = d;
 }
 
 int Colored::getIndice_essai()
