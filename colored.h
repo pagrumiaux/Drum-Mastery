@@ -25,6 +25,7 @@ public:
     Note_jugee* getTabListesJugees();
 
     void setStarted(bool v);
+    void setDecompte(bool d);
 
 public slots:
 
@@ -35,6 +36,7 @@ private:
 
     bool vue; //vrai si on veut avoir la vue
     bool started;
+    bool decompte;
 
     int m_taille_mesure; // taille d'une mesure en pixel
     int vitesse;
