@@ -1,13 +1,11 @@
-/*Cette page contient le code qui permet de faire une boucle d'enregistrement et d'écoute des signaux en entrée de l'entrée ligne de l'ordinateur.
-Attention, inputParameters.device correspond à l'entrée ligne de mon ordinateur, et vaut 7 ici, mais ce chiffre dépend de l'ordinateur */
-
+#include "boum.h"
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include "portaudio.h"
 #include "pa_asio.h"
 #include <QApplication>
-#include "boum.h"
+#include <windows.h>
+#include "portaudio.h"
 
 #define SAMPLE_RATE  (44100)//(44100)
 #define FRAMES_PER_BUFFER (103)//(512)
@@ -102,7 +100,8 @@ static int recordCallback(const void *inputBuffer, void *outputBuffer,
 }
 
 Boum::Boum() //constructeur
-{};
+{}
+
 
 // fonction qui permet de lancer le debug qui affiche boum si on tape sur le pad
 
@@ -222,8 +221,25 @@ int Boum::fonctionBoum(void)
             if (val>M)
             {
                 qDebug("BOUM %d %f",b,val);
-                //Pa_Sleep(80);
+                this->resultReady();
+                simulationEspace();//Simulation de la touche espace
+                /*INPUT simulationAppuiEspace [1];
 
+                simulationAppuiEspace[0].type = 1; //Pour dire que c'est un keyboard event.
+                simulationAppuiEspace[0].ki.wScan = 0x41;
+                simulationAppuiEspace[0].ki.time = 0;
+
+                INPUT simulationRelacheEspace [1];
+
+                simulationRelacheEspace[0].type = 1;
+                simulationRelacheEspace[0].ki.wScan = 0x41d;
+                simulationRelacheEspace[0].ki.dwFlags = KEYEVENTF_KEYUP;
+                simulationRelacheEspace[0].ki.time = 0;
+
+                SendInput (1,simulationAppuiEspace, sizeof(simulationAppuiEspace));
+                SendInput (1,simulationRelacheEspace, sizeof(simulationAppuiEspace)); */
+                //Pa_Sleep(80);
+                b = b+1;
             }
         }
     }
@@ -237,3 +253,10 @@ done:
     return 0;
 }
 
+void Boum::doWork () //slot qui permet de lancer fonctionBoum
+{
+    this->fonctionBoum();
+}
+
+void resultReady ()
+{}
