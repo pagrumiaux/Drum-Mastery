@@ -37,9 +37,10 @@ Sheet::Sheet(QWidget *parent)
     const QString filePath2 = "C:/Users/PA/Documents/Drum Mastery/metronome2.wav";
     metronome.setMedia(QUrl::fromLocalFile(filePath2));
 
-    bpm = 120; //on travaille en 4/4 pour l'instant
-    vitesse = (4*60*1000)/(m_taille_mesure*bpm); //calcul de la vitesse de déplacement du curseur (nbre de msec entre chaque pixel)
-    qDebug("vitesse : %d", vitesse);
+    bpm = 160; //on travaille en 4/4 pour l'instant
+    vitesse = 4; //calcul de la vitesse de déplacement du curseur (nbre de msec entre chaque pixel)
+    duree1Temps = 60*1000/bpm;
+    duree1Mesure = duree1Temps * 4;
 
     //création des mesures à jouer
     nbre_mesures = 1;
@@ -47,7 +48,7 @@ Sheet::Sheet(QWidget *parent)
     m_mesure = new Measure();
 
     /*mise en place de la zone coloree*/
-    zone_coloree = new Colored(0, m_taille_mesure, tab_liste_jugee, m_mesure, vitesse, nbre_mesures);
+    zone_coloree = new Colored(0, m_taille_mesure, tab_liste_jugee, m_mesure, vitesse, nbre_mesures, duree1Temps, duree1Mesure);
     zone_coloree->setMinimumSize(1100, (nbre_mesures > 2)? 1555 : 760);
     scrollArea = new QScrollArea;
     scrollArea->setWidget(zone_coloree);
@@ -83,23 +84,23 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     painter.setFont(font);
     if((decompte && started) && !preecoute)
     {
-        if(0 <=time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse/4)
+        if(0 <=time.elapsed() && time.elapsed() <= duree1Temps)
             n_compte.append(QString("%1").arg(4));
-        if(m_taille_mesure*vitesse/4 <=time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse*2/4)
+        if(duree1Temps <=time.elapsed() && time.elapsed() <= duree1Temps*2)
             n_compte.append(QString("%1").arg(3));
-        if(m_taille_mesure*vitesse*2/4 <=time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse*3/4)
+        if(duree1Temps*2 <=time.elapsed() && time.elapsed() <= duree1Temps*3)
             n_compte.append(QString("%1").arg(2));
-        if(m_taille_mesure*vitesse*3/4 <=time.elapsed() && time.elapsed() <= m_taille_mesure*vitesse*4/4)
+        if(duree1Temps*3 <=time.elapsed() && time.elapsed() <= duree1Temps*4)
             n_compte.append(QString("%1").arg(1));
         painter.drawText(525,70, n_compte);
     }
 
     /*lecture du metronome*/
-    if(metronome_active)
+    if(metronome_active && !preecoute)
     {
         if(started)
         {
-            if(((time.elapsed() % 500) <= 8) || ((time.elapsed() % 500) >= 492))
+            if((time.elapsed() % (duree1Temps) <= 8) || ((time.elapsed() % (duree1Temps) >= (duree1Temps)-8)))
             {
                 metronome.play();
                 //qDebug("m %d", time.elapsed());
@@ -108,22 +109,37 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     }
 
     /*préécoute*/
-    if(preecoute)
+    /*if(preecoute)
     {
-        Note* liste_note_pre;
-        liste_note_pre = m_mesure->getNote();
-        int cumul = liste_note_pre->getValeur();
-        kick.play();
-        while(!liste_note_pre->estDerniere())
+        qDebug("%d", time.elapsed());
+        if(time.elapsed() >= duree1Mesure * cumul_preecoute - 10 && time.elapsed() <= duree1Mesure * cumul_preecoute + 10)
         {
-            if(time.elapsed() >= vitesse * m_taille_mesure * cumul - 10 && time.elapsed() <= vitesse * m_taille_mesure * cumul - 10)
+            qDebug("PLAY : cumul = %f", cumul_preecoute);
+            if(!(note_preecoute->estDerniere() && mesure_preecoute->getDerniere()))
             {
                 kick.play();
-                liste_note_pre = liste_note_pre->getSuivante();
-                cumul += liste_note_pre->getValeur();
+                qDebug("kick");
+            }
+            if(note_preecoute->estDerniere() && !mesure_preecoute->getDerniere())
+            {
+                cumul_preecoute += note_preecoute->getValeur();
+                mesure_preecoute = m_mesure->getSuivante();
+                note_preecoute = m_mesure->getNote();
+            }
+            else if (note_preecoute->estDerniere() && mesure_preecoute->getDerniere())
+            {
+                qDebug("dernière");
+                stop();
+                started = false;
+                preecoute = false;
+            }
+            else
+            {
+                cumul_preecoute += note_preecoute->getValeur();
+                note_preecoute = note_preecoute->getSuivante();
             }
         }
-    }
+    }*/
 
 
     /*graduations*/
@@ -232,7 +248,7 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     /*barre défilante*/
     if(started)
     {
-        if(!decompte)
+        if(!decompte && !preecoute)
         {
             painter.setPen(QPen(Qt::black, 3));
             painter.drawLine((nbre_mesures > 1) ? step : step + 300, (mesure_actuelle > 2)? 90 : 40, (nbre_mesures > 1) ? step : step + 300, (mesure_actuelle > 2)? 130 : 80); //mesure à jouer
@@ -240,17 +256,17 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     }
 
     /*passage d'une mesure à l'autre*/
-    if(time.elapsed() <= vitesse*m_taille_mesure)
+    if(time.elapsed() <= duree1Mesure)
         mesure_actuelle = 1;
-    if(time.elapsed() >= vitesse*m_taille_mesure && time.elapsed() <= vitesse*m_taille_mesure*2)
+    if(time.elapsed() >= duree1Mesure && time.elapsed() <= duree1Mesure*2)
         mesure_actuelle = 2;
-    if(time.elapsed() >= vitesse*m_taille_mesure*2 && time.elapsed() <= vitesse*m_taille_mesure*3)
+    if(time.elapsed() >= duree1Mesure*2 && time.elapsed() <= duree1Mesure*3)
         mesure_actuelle = 3;
-    if(time.elapsed() >= vitesse*m_taille_mesure*3 && time.elapsed() <= vitesse*m_taille_mesure*4)
+    if(time.elapsed() >= duree1Mesure*3 && time.elapsed() <= duree1Mesure*4)
         mesure_actuelle = 4;
 
 
-    if(decompte && time.elapsed() >= vitesse*m_taille_mesure)
+    if(decompte && time.elapsed() >= duree1Mesure)
     {
         decompte = false;
         zone_coloree->setDecompte(false);
@@ -258,13 +274,9 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     }
 
     /*pour revenir au début et commencer un nouvel essai*/
-    if(time.elapsed() >= vitesse*m_taille_mesure*nbre_mesures && indice_essai < 10)
+    if(time.elapsed() >= duree1Mesure*nbre_mesures && indice_essai < 10)
     {
-        if(preecoute)
-        {
-            stop();
-        }
-        else
+
         {
             time.restart();
             if(!decompte)
@@ -280,7 +292,7 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     }
 
     /*quand on a fini les 10 essais, ça s'arrête, et on remet tout à 0*/
-    if((indice_essai >= 10) && (time.elapsed() > vitesse*m_taille_mesure*nbre_mesures))
+    if((indice_essai >= 10) && (time.elapsed() > duree1Mesure*nbre_mesures))
     {
         started = false;
         step = 50 + 16;
@@ -288,14 +300,13 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
         scrollArea->ensureVisible(0, 0);
     }
 
-    preecoute = false;
 }
 
 void Sheet::timerEvent(QTimerEvent *event) //event envoyé tous les vitesse ms
 {
     if ((event->timerId() == timer.timerId()) && started)
     {
-        step = (nbre_mesures > 1)? time.elapsed()*500/2000 + 50 + 16 : time.elapsed()*500/2000 + 16;
+        step = (nbre_mesures > 1)? time.elapsed()*500/(duree1Mesure) + 50 + 16 : time.elapsed()*500/(duree1Mesure) + 16;
         if (nbre_mesures > 1 && step > 1050)
             step = step - 1000;
         if(nbre_mesures == 1 && step > 550)
@@ -466,7 +477,7 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
 {
     int temps_tape = time.elapsed();
 
-    if (event->key() == Qt::Key_Space && !((indice_essai == 10) && (time.elapsed() + vitesse*16 >= 2000*nbre_mesures))) // quand on tape sur la touche espace
+    if (event->key() == Qt::Key_Space && !((indice_essai == 10) && (time.elapsed() + vitesse*16 >= duree1Mesure*nbre_mesures))) // quand on tape sur la touche espace
     {
         int a;
         Note_jugee* note_aff;
@@ -495,7 +506,7 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
         }
 
         /*on sauvegarde le temps auquel on a tapé*/
-        if((temps_tape + vitesse*16 >= 2000*nbre_mesures && started))
+        if((temps_tape + vitesse*16 >= duree1Mesure*nbre_mesures && started))
         {
             if(indice_essai == 1 && decompte)
                 getNoteJugee(1, tab_liste_jugee[0])->setTemps(temps_tape);
@@ -511,32 +522,32 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
         Note *note_int = m_mesure->getNote()->getSuivante();
         float temps_cumule = 0;
         bool ok;
-        while (temps_cumule + 30 <= (temps_tape % 2000*nbre_mesures))
+        while (temps_cumule + 30 <= (temps_tape % duree1Mesure*nbre_mesures))
         {
-            if(abs((temps_tape % 2000) - temps_cumule) <= 30)
+            if(abs((temps_tape % duree1Mesure) - temps_cumule) <= 30)
             {
-                if(temps_tape + vitesse*16 >= 2000*nbre_mesures && started && !decompte)
+                if(temps_tape + vitesse*16 >= duree1Mesure*nbre_mesures && !decompte)
                     getNoteJugee(1, tab_liste_jugee[indice_essai])->setCorrecte(true);
-                else if(temps_tape + vitesse*16 >= 2000*nbre_mesures && started && decompte)
+                else if(temps_tape + vitesse*16 >= duree1Mesure*nbre_mesures && decompte)
                     getNoteJugee(1, tab_liste_jugee[indice_essai-1])->setCorrecte(true);
                 else
                     getNoteJugee(indice_j, tab_liste_jugee[indice_essai-1])->setCorrecte(true);
                 ok = true;
             }
-            temps_cumule += note_int->getValeur()*m_taille_mesure*float(vitesse);
+            temps_cumule += note_int->getValeur()* duree1Mesure;
             if(!note_int->estDerniere())
                 note_int = note_int->getSuivante();
-            else
+            if(note_int->estDerniere() && !mesure_int->getDerniere())
             {
                 mesure_int = mesure_int->getSuivante();
                 note_int = mesure_int->getNote();
             }
         }
-        if(abs((temps_tape % 2000) - temps_cumule) <= 30)
+        if(abs((temps_tape % duree1Mesure) - temps_cumule) <= 30)
         {
-            if(temps_tape + vitesse*16 >= 2000*nbre_mesures && started && !decompte)
+            if(temps_tape + vitesse*16 >= duree1Mesure*nbre_mesures && started && !decompte)
                 getNoteJugee(1, tab_liste_jugee[indice_essai])->setCorrecte(true);
-            else if(temps_tape + vitesse*16 >= 2000*nbre_mesures && started && decompte)
+            else if(temps_tape + vitesse*16 >= duree1Mesure*nbre_mesures && started && decompte)
                 getNoteJugee(1, tab_liste_jugee[indice_essai-1])->setCorrecte(true);
             else
                 getNoteJugee(indice_j, tab_liste_jugee[indice_essai-1])->setCorrecte(true);
@@ -545,9 +556,9 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
 
         if(!ok)
         {
-            if(temps_tape + vitesse*16 >= 2000*nbre_mesures && started && !decompte)
+            if(temps_tape + vitesse*16 >= duree1Mesure*nbre_mesures && started && !decompte)
                 getNoteJugee(1, tab_liste_jugee[indice_essai])->setCorrecte(false);
-            else if(temps_tape + vitesse*16 >= 2000*nbre_mesures && started && decompte)
+            else if(temps_tape + vitesse*16 >= duree1Mesure*nbre_mesures && started && decompte)
                 getNoteJugee(1, tab_liste_jugee[indice_essai-1])->setCorrecte(false);
             else
                 getNoteJugee(indice_j, tab_liste_jugee[indice_essai-1])->setCorrecte(false);
@@ -574,6 +585,9 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
     if(event->key() == Qt::Key_P)
     {
         preecoute = true;
+        note_preecoute = m_mesure->getNote();
+        mesure_preecoute = m_mesure;
+        cumul_preecoute = 0.;
         start();
     }
     if(event->key() == Qt::Key_A)
@@ -703,6 +717,11 @@ void Sheet::load(QTextStream *text)
     int j;
     for(j=0; j<nbre_mesures; j++)
     {
+        if(j > 0)
+        {
+            mesure_int->creerSuivante();
+            mesure_int = mesure_int->getSuivante();
+        }
         Note* note = new Note(1, CharToInt(contenu.at(i)));
         mesure_int->setNote(note);
         Note* note_int = mesure_int->getNote();
@@ -714,9 +733,12 @@ void Sheet::load(QTextStream *text)
             note_int = note_int->getSuivante();
         }
         i++;
-        mesure_int->creerSuivante();
-        mesure_int = mesure_int->getSuivante();
     }
     update();
     zone_coloree->setMinimumSize(1100, (nbre_mesures > 2)? 1255 : 760);
+
+    //chargement pour la préécoute
+    /*mesure_preecoute = m_mesure;
+    note_preecoute = m_mesure->getNote();
+    cumul_preecoute = 0.;*/
 }
