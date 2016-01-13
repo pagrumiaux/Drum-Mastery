@@ -63,6 +63,8 @@ private:
     int nbre_mesures;
     Measure *m_mesure;
     int mesure_actuelle;
+    int duree1Temps;
+    int duree1Mesure;
 
     Note_jugee* tab_liste_jugee[10]; //tableau qui retient les notes jouées (jusqu'à 10 essais)
     int indice_j; //indice pour parcourir une liste de notes jugées
@@ -70,7 +72,10 @@ private:
 
     Colored *zone_coloree;
     QScrollArea *scrollArea;
-
     QVBoxLayout *layoutV;
+
+    Measure* mesure_preecoute;
+    Note* note_preecoute; //variables utiles à la préécoute
+    float cumul_preecoute;
 };
 
