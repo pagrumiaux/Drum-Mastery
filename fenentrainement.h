@@ -25,21 +25,20 @@ public:
 
 public slots:
 void handleResults ();
+//void changerPerformance();
 
 private slots:
     void on_boutonPlayPause_clicked();
     void on_boutonRetourMenu_clicked();
     void on_ouvrirExploreur_clicked();
-    void on_nouveau_clicked();
-    void on_boutonModeVue_clicked();
-    void on_stop_clicked();
     void on_boutonMetronome_clicked();
     void on_boutonVolume_valueChanged(int position);
     void on_boutonSonOn_clicked();
-    void on_boutonStop_clicked();
+    void on_boutonBpm_valueChanged(int bpm);
 
 signals :
     void operate ();
+    void timerLance ();
 
 private:
     Ui::FenEntrainement *ui;
