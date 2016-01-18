@@ -1,4 +1,4 @@
-#include "boum.h"
+##include "boum.h"
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -117,7 +117,7 @@ int Boum::fonctionBoum(void)
     PaError             err = paNoError;
     paTestData          data;
     int                 i, a = 0, b = 1; // M est le seuil de detection
-    float				M = 0.0013;
+    float				M = 0.008;
     int                 totalFrames;
     int                 numSamples;
     int                 numBytes;
@@ -224,10 +224,12 @@ int Boum::fonctionBoum(void)
             //qDebug() << "valeur du pic" << max << endl;
             if (val>M)
             {
-                qDebug("BOUM %d %f",b,val);
+
+                //qDebug("BOUM %d %f",b,val);
                 //qDebug("temps au boum %d %d",b, time.elapsed());
                 this->resultReady();
                 simulationEspace();//Simulation de la touche espace
+                Pa_Sleep(100);
                 /*INPUT simulationAppuiEspace [1];
 
                 simulationAppuiEspace[0].type = 1; //Pour dire que c'est un keyboard event.
