@@ -89,3 +89,4 @@ bool Measure::getDerniere()
 {
     return estDerniere;
 }
+
