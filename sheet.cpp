@@ -10,6 +10,8 @@
 #include "measure.h"
 #include "notes_jugees.h"
 #include "math.h"
+#include "fenentrainement.h"
+#include "ui_fenentrainement.h"
 
 Sheet::Sheet(QWidget *parent)
     : QWidget(parent)
@@ -32,15 +34,15 @@ Sheet::Sheet(QWidget *parent)
     indice_essai = 1;
 
     /*initialisation du son*/
-    const QString filePath = "C:/Users/PA/Documents/Drum Mastery/kick2.wav";
+    const QString filePath = "C:/Users/Vero/Documents/Cours/C++/fenetreEdition/MesSons/sonKick.wav";
     kick.setMedia(QUrl::fromLocalFile(filePath));
-    const QString filePath2 = "C:/Users/PA/Documents/Drum Mastery/metronome2.wav";
+    const QString filePath2 = "C:/Users/Vero/Documents/Cours/C++/fenetreEdition/MesSons/son_metronome.MP3";
     metronome.setMedia(QUrl::fromLocalFile(filePath2));
 
-    bpm = 160; //on travaille en 4/4 pour l'instant
+    bpm = 120; //on travaille en 4/4 pour l'instant
     vitesse = 4; //calcul de la vitesse de déplacement du curseur (nbre de msec entre chaque pixel)
     duree1Temps = 60*1000/bpm;
-    duree1Mesure = duree1Temps * 4;
+    duree1Mesure  = duree1Temps * 4;
 
     //création des mesures à jouer
     nbre_mesures = 1;
@@ -67,7 +69,7 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    //qDebug("début : %d", time.elapsed());
+    //qDebug("affiche");
 
     /*affichage pourcentage + numero essai*/
     QString p;
@@ -75,7 +77,7 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     QFont font = painter.font();
     font.setPointSize(20);
     painter.setFont(font);
-    painter.drawText(10, 25, p);
+    //painter.drawText(10, 25, p);
 
     /*affichage du décompte*/
     QString n_compte;
@@ -212,6 +214,8 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
         }
     }
 
+    qDebug("%d", time.elapsed());
+
     /*trait séparation*/
     painter.setPen(QPen(Qt::black, 1));
     painter.drawLine(0, 150, 1200, 150);
@@ -292,12 +296,14 @@ void Sheet::paintEvent(QPaintEvent * /* event */)
     }
 
     /*quand on a fini les 10 essais, ça s'arrête, et on remet tout à 0*/
-    if((indice_essai >= 10) && (time.elapsed() > duree1Mesure*nbre_mesures))
+    if((indice_essai >= 10) && (time.elapsed() > duree1Mesure*nbre_mesures) && started)
     {
         started = false;
         step = 50 + 16;
         zone_coloree->setStarted(false);
-        scrollArea->ensureVisible(0, 0);
+
+        this->uiParentFenetre->boutonPlayPause->setStyleSheet("QPushButton{border-image : url(:/images/MesImages/playoff.png) 0 0 0 0 stretch stretch; border-width : 0px; background-position : center; min-width : 70px; max-width : 70px; min-height : 70px; max-height : 70px; color : transparent;}");
+        //scrollArea->ensureVisible(0, 0);
     }
 
 }
@@ -312,7 +318,7 @@ void Sheet::timerEvent(QTimerEvent *event) //event envoyé tous les vitesse ms
         if(nbre_mesures == 1 && step > 550)
             step = step - 500;
 
-        update(); // pour que le widget s'update        
+        update(); // pour que le widget s'update
         scrollArea->ensureVisible(0, (nbre_mesures > 2)? 60+indice_essai*125 : 60 + indice_essai*75);
         zone_coloree->update();
     }
@@ -329,32 +335,32 @@ QPixmap Sheet::ImageOfNote(Note *note, char c)
     if(c == 'n')
     {
         if (i == 1.0)
-            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/ronde_n.png");
+            pix.load(":/notes/MesNotes/ronde_n.png");
         if (i == 0.5)
-            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/blanche_n.png");
+            pix.load(":/notes/MesNotes/blanche_n.png");
         if (i == 0.25)
-            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_n.png");
+            pix.load(":/notes/MesNotes/noire_n.png");
         if (i == 0.125)
-            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/croche_n.png");
+            pix.load(":/notes/MesNotes/croche_n.png");
         if (i == 0.0625)
-            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/double_croche_n.png");
+            pix.load(":/notes/MesNotes/double_croche_n.png");
         if (i == 0.03125)
-            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/triple_croche_n.png");
+            pix.load(":/notes/MesNotes/triple_croche_n.png");
     }
     if(c == 'g')
     {
         if (i == 1.0)
-            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/ronde_g.png");
+            pix.load(":/notes/MesNotes/ronde_g.png");
         if (i == 0.5)
-            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/blanche_g.png");
+            pix.load(":/notes/MesNotes/blanche_g.png");
         if (i == 0.25)
-            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/noire_g.png");
+            pix.load(":/notes/MesNotes/noire_g.png");
         if (i == 0.125)
-            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/croche_g.png");
+            pix.load(":/notes/MesNotes/croche_g.png");
         if (i == 0.0625)
-            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/double_croche_g.png");
+            pix.load(":/notes/MesNotes/double_croche_g.png");
         if (i == 0.03125)
-            pix.load("C:/Users/PA/Documents/Drum Mastery/Images/Notes/triple_croche_g.png");
+            pix.load(":/notes/MesNotes/triple_croche_g.png");
     }
 
     return pix;
@@ -450,11 +456,8 @@ void Sheet::start()
         indice_j = 1;
         timer.start(vitesse, this);
         time.start();
-        if(decompte)
-        {
-            started = true;
-            zone_coloree->setStarted(true);
-        }
+        started = true;
+        zone_coloree->setStarted(true);
         decompte = true;
         zone_coloree->setDecompte(true);
     }
@@ -468,32 +471,36 @@ void Sheet::stop()
         started = false;
         zone_coloree->setStarted(false);
         step = 50;
-        decompte = false;
+        decompte = true;
         scrollArea->ensureVisible(0, 0);
     }
 }
 
 void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est pressée
 {
-    int temps_tape = time.elapsed();
+    int temps_tape = time.elapsed() - 170;
+    //if(temps_tape < 0)
+        //temps_tape = temps_tape + duree1Mesure;
+    qDebug("%d", temps_tape);
 
-    if (event->key() == Qt::Key_Space && !((indice_essai == 10) && (time.elapsed() + vitesse*16 >= duree1Mesure*nbre_mesures))) // quand on tape sur la touche espace
+    if (event->key() == Qt::Key_Space && !((indice_essai == 10) && (time.elapsed() + vitesse*16 >= duree1Mesure*nbre_mesures)) && started) // quand on tape sur la touche espace
     {
         int a;
         Note_jugee* note_aff;
         for(a=0; a<indice_essai; a++)
         {
             note_aff = tab_liste_jugee[a];
-            qDebug("essai : %d", a);
+            //qDebug("essai : %d", a);
             while(!note_aff->estDerniere())
             {
-                qDebug("%d", note_aff->getTemps());
+                //qDebug("%d", note_aff->getTemps());
                 note_aff = note_aff->getSuivante();
             }
         }
-        qDebug(" ");
+        //qDebug(" ");
 
-        kick.play();
+        //kick.play();
+
 
         /*si on est la première note mais qu'elle est déjà modifiée, on passe à la suivante*/
         if(indice_j == 1 && !tab_liste_jugee[indice_essai-1]->estDefaut())
@@ -522,9 +529,9 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
         Note *note_int = m_mesure->getNote()->getSuivante();
         float temps_cumule = 0;
         bool ok;
-        while (temps_cumule + 30 <= (temps_tape % duree1Mesure*nbre_mesures))
+        while (temps_cumule + 40 <= (temps_tape % duree1Mesure*nbre_mesures))
         {
-            if(abs((temps_tape % duree1Mesure) - temps_cumule) <= 30)
+            if(abs((temps_tape % duree1Mesure) - temps_cumule) <= 40)
             {
                 if(temps_tape + vitesse*16 >= duree1Mesure*nbre_mesures && !decompte)
                     getNoteJugee(1, tab_liste_jugee[indice_essai])->setCorrecte(true);
@@ -543,7 +550,7 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
                 note_int = mesure_int->getNote();
             }
         }
-        if(abs((temps_tape % duree1Mesure) - temps_cumule) <= 30)
+        if(abs((temps_tape % duree1Mesure) - temps_cumule) <= 40)
         {
             if(temps_tape + vitesse*16 >= duree1Mesure*nbre_mesures && started && !decompte)
                 getNoteJugee(1, tab_liste_jugee[indice_essai])->setCorrecte(true);
@@ -565,19 +572,23 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
         }
 
         indice_j += 1;
+        emit changementPerformance(this->getPerformance());
+        qDebug("performance %d", this->getPerformance());
         zone_coloree->setTabListesJugees(tab_liste_jugee);
 
         update(); //idem, update du widget
 
     }
-    if(event->key() == Qt::Key_Alt)
+    /*if(event->key() == Qt::Key_Alt)
     {
         if(!started)
         {
+            this->uiParentFenetre->boutonPlayPause->setStyleSheet("QPushButton{border-image : url(:/images/MesImages/pauseoff.png) 0 0 0 0 stretch stretch; border-width : 0px; background-position : center; min-width : 70px; max-width : 70px; min-height : 70px; max-height : 70px; color : transparent;}");
             start();
         }
         else
         {
+            this->uiParentFenetre->boutonPlayPause->setStyleSheet("QPushButton{border-image : url(:/images/MesImages/playoff.png) 0 0 0 0 stretch stretch; border-width : 0px; background-position : center; min-width : 70px; max-width : 70px; min-height : 70px; max-height : 70px; color : transparent;}");
             stop();
         }
 
@@ -592,7 +603,7 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
     }
     if(event->key() == Qt::Key_A)
     {
-        QFile file("simple1.dm");
+        QFile file(":/partitions/MesPartitions/simple1.dm");
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
                 return;
         QTextStream text(&file);
@@ -600,7 +611,7 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
     }
     if(event->key() == Qt::Key_Z)
     {
-        QFile file("simple2.dm");
+        QFile file(":/partitions/MesPartitions/simple2.dm");
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
                 return;
         QTextStream text(&file);
@@ -637,7 +648,7 @@ void Sheet::keyPressEvent(QKeyEvent *event) //event envoyé quand une touche est
                 return;
         QTextStream text(&file);
         load(&text);
-    }
+    }*/
 }
 
 void Sheet::save()
@@ -742,3 +753,58 @@ void Sheet::load(QTextStream *text)
     note_preecoute = m_mesure->getNote();
     cumul_preecoute = 0.;*/
 }
+
+void Sheet::setKickVolume(int position)
+    {
+        kick.setVolume(position);
+    }
+
+void Sheet::setMetronomeVolume(int position)
+    {
+        metronome.setVolume(position);
+    }
+
+bool Sheet::getStarted ()
+    {
+        return started;
+    }
+
+int Sheet::getBpm()
+{
+    return bpm;
+}
+
+void Sheet::setBpm(int valeurBpm)
+{
+    bpm = valeurBpm;
+    qDebug("%d",bpm);
+}
+
+Sheet::~Sheet()
+{}
+
+void Sheet::setDuree1Temps(int bpm)
+{
+    duree1Temps = 60*1000/bpm;
+}
+
+void Sheet::setDuree1Mesure(int bpm)
+{
+    duree1Mesure = 4 * 60*1000/bpm;
+}
+
+Measure* Sheet::getMesure()
+{
+    return m_mesure;
+}
+
+void Sheet::setStarted(bool valeurStarted)
+{
+   this->started = valeurStarted;
+}
+
+Colored* Sheet::getZoneColoree()
+{
+    return zone_coloree;
+}
+
