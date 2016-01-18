@@ -20,6 +20,7 @@ public:
     void setIndice_essai(int indice);
     int getIndice_essai();
     void setNbMesure(int nb);
+    void setDuree1Mesure(int bpm);
 
     void setTabListesJugees(Note_jugee* t_liste_jugee[]);
     Note_jugee* getTabListesJugees();
