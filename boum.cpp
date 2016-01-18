@@ -6,9 +6,13 @@
 #include <QApplication>
 #include <windows.h>
 #include "portaudio.h"
+#include "notes_jugees.h"
+#include "measure.h"
+#include "sheet.h"
+#include "colored.h"
 
 #define SAMPLE_RATE  (44100)//(44100)
-#define FRAMES_PER_BUFFER (103)//(512)
+#define FRAMES_PER_BUFFER (512)//(512)
 #define NUM_SECONDS     (0.08)// Le temps de traitement de l'enregistrement et de réinitialisation est de 0,08s
 #define NUM_CHANNELS    (2)
 
@@ -113,7 +117,7 @@ int Boum::fonctionBoum(void)
     PaError             err = paNoError;
     paTestData          data;
     int                 i, a = 0, b = 1; // M est le seuil de detection
-    float				M = 0.0009;
+    float				M = 0.0013;
     int                 totalFrames;
     int                 numSamples;
     int                 numBytes;
@@ -133,7 +137,7 @@ int Boum::fonctionBoum(void)
     //Debut de la boucle
 
     a = 0; // parametre determinant au bout de cbn de notes arreter le programme
-    while (a<30)
+    while (a<200)
     {
         val = 0.; // maximum d'amplitude des pics mesures
         a = a + 1;
@@ -221,6 +225,7 @@ int Boum::fonctionBoum(void)
             if (val>M)
             {
                 qDebug("BOUM %d %f",b,val);
+                //qDebug("temps au boum %d %d",b, time.elapsed());
                 this->resultReady();
                 simulationEspace();//Simulation de la touche espace
                 /*INPUT simulationAppuiEspace [1];
@@ -255,7 +260,14 @@ done:
 
 void Boum::doWork () //slot qui permet de lancer fonctionBoum
 {
+    qDebug("foncboum");
     this->fonctionBoum();
+}
+
+void Boum::lancerTimer()
+{
+    qDebug("lancée du timeboum");
+    this->time.start();
 }
 
 void resultReady ()
