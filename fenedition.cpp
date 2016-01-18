@@ -2,6 +2,7 @@
 #include "ui_fenedition.h"
 #include "fenstart.h"
 #include "ui_fenstart.h"
+#include "timer.h"
 
 FenEdition::FenEdition(QWidget *parent) : //constructeur de la fenête d'édition
     QWidget(parent),
@@ -57,4 +58,40 @@ void FenEdition::on_boutonRetourArriere_clicked() //Pour passer de la fenêtre �
     fenetreDemarrage = new FenStart;
     fenetreDemarrage->show();
     this->hide();
+}
+
+//SLOT pour ouvrir l'explorateur de fichiers
+
+void FenEdition::on_ouvrirExploreur_clicked()
+{
+    QStringList listeFichiers = QFileDialog::getOpenFileNames (this, tr("Ouvrir un fichier"), QDir :: currentPath(), tr("Documents (*doc);;All files (*.*)"));
+
+}
+
+//SLOT pour afficher la fenêtre de confirmation d'ouverture d'une nouvelle fenêtre
+
+void FenEdition::on_nouveau_clicked()
+{
+    QMessageBox confirmationNouveau;
+    confirmationNouveau.setText(tr("Voulez-vous enregistrer ?"));
+    confirmationNouveau.setWindowTitle("DrumMastery");
+    QAbstractButton* boutonOui = confirmationNouveau.addButton(tr("Oui"), QMessageBox::YesRole);
+    QAbstractButton* boutonNon = confirmationNouveau.addButton(tr("Non"), QMessageBox::NoRole);
+    confirmationNouveau.addButton(tr("Annuler"), QMessageBox::RejectRole);
+
+    confirmationNouveau.exec();
+
+    if (confirmationNouveau.clickedButton()==boutonOui)
+    {
+        FenEdition *nouvelleFenetre;
+        nouvelleFenetre = new FenEdition;
+        nouvelleFenetre->show();
+    }
+
+    if (confirmationNouveau.clickedButton()==boutonNon)
+    {
+        FenEdition *nouvelleFenetre;
+        nouvelleFenetre = new FenEdition;
+        nouvelleFenetre->show();
+    }
 }
