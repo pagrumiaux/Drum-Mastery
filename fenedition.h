@@ -2,6 +2,9 @@
 #define FENEDITION_H
 
 #include <QWidget>
+#include <QStringList>
+#include <QFileDialog>
+#include <QMessageBox>
 
 namespace Ui {
 class FenEdition;
@@ -21,6 +24,10 @@ private slots:
     void on_boutonSonOn_clicked();
 
     void on_boutonRetourArriere_clicked();
+
+    void on_ouvrirExploreur_clicked();
+
+    void on_nouveau_clicked();
 
 private:
     Ui::FenEdition *ui;
