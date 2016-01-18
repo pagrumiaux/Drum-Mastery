@@ -1,7 +1,9 @@
 #ifndef BOUM_H
 #define BOUM_H
 
+#include<QTime>
 #include <QObject>
+#include <QMediaPlayer>
 #include "portaudio.h"
 #include "fenentrainement.h"
 
@@ -15,9 +17,13 @@ class Boum : public QObject
 
     public slots :
         void doWork ();
+        void lancerTimer();
 
     signals :
         void resultReady ();
+
+   private :
+        QTime time;
     };
 
 static int recordCallback(const void *inputBuffer, void *outputBuffer,
@@ -27,4 +33,3 @@ static int recordCallback(const void *inputBuffer, void *outputBuffer,
       void *userData);
 
 #endif // BOUM_H
-
