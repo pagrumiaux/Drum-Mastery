@@ -33,3 +33,4 @@ static int recordCallback(const void *inputBuffer, void *outputBuffer,
       void *userData);
 
 #endif // BOUM_H
+
