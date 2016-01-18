@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Fenêtre édition - DrumMastery</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget
@@ -40,6 +40,46 @@ background-color : white;
      <widget class="Line" name="line_4">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="annuler">
+      <property name="styleSheet">
+       <string notr="true">QPushButton
+{
+border-image : url(:/images/MesImages/annuler.png) 0 0 0 0 stretch stretch;
+border-width : 0px;
+background-position : center;
+min-width : 70px;
+max-width : 70px;
+min-height : 70px;
+max-height : 70px;
+color : transparent;
+}</string>
+      </property>
+      <property name="text">
+       <string>Play</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="retablir">
+      <property name="styleSheet">
+       <string notr="true">QPushButton
+{
+border-image : url(:/images/MesImages/retablir.png) 0 0 0 0 stretch stretch;
+border-width : 0px;
+background-position : center;
+min-width : 70px;
+max-width : 70px;
+min-height : 70px;
+max-height : 70px;
+color : transparent;
+}</string>
+      </property>
+      <property name="text">
+       <string>Play</string>
       </property>
      </widget>
     </item>
@@ -126,7 +166,7 @@ border-style : solid;
      <x>360</x>
      <y>80</y>
      <width>1051</width>
-     <height>72</height>
+     <height>74</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -151,11 +191,104 @@ color : transparent;
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QPushButton" name="record">
+      <property name="styleSheet">
+       <string notr="true">QPushButton
+{
+border-image : url(:/images/MesImages/plyoff.png) 0 0 0 0 stretch stretch;
+border-width : 0px;
+background-position : center;
+min-width : 70px;
+max-width : 70px;
+min-height : 70px;
+max-height : 70px;
+color : transparent;
+}</string>
+      </property>
+      <property name="text">
+       <string>Play</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="stop">
+      <property name="styleSheet">
+       <string notr="true">QPushButton
+{
+border-image : url(:/images/MesIages/playoff.png) 0 0 0 0 stretch stretch;
+border-width : 0px;
+background-position : center;
+min-width : 70px;
+max-width : 70px;
+min-height : 70px;
+max-height : 70px;
+color : transparent;
+}</string>
+      </property>
+      <property name="text">
+       <string>Play</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer_24">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QPushButton" name="nouveau">
+      <property name="styleSheet">
+       <string notr="true">QPushButton
+{
+border-image : url(:/images/MesImages/nouveau.png) 0 0 0 0 stretch stretch;
+border-width : 0px;
+background-position : center;
+min-width : 70px;
+max-width : 70px;
+min-height : 70px;
+max-height : 70px;
+color : transparent;
+}</string>
+      </property>
+      <property name="text">
+       <string>PushButton</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="ouvrirExploreur">
       <property name="styleSheet">
        <string notr="true">QPushButton
 {
 border-image : url(:/images/MesImages/ouvrir.png) 0 0 0 0 stretch stretch;
+border-width : 0px;
+background-position : center;
+min-width : 70px;
+max-width : 70px;
+min-height : 70px;
+max-height : 70px;
+color : transparent;
+}</string>
+      </property>
+      <property name="text">
+       <string>PushButton</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton">
+      <property name="styleSheet">
+       <string notr="true">QPushButton
+{
+border-image : url(:/images/MesImages/save.png) 0 0 0 0 stretch stretch;
 border-width : 0px;
 background-position : center;
 min-width : 70px;
@@ -303,6 +436,81 @@ color : transparent;
      </layout>
     </item>
     <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
+      <item>
+       <spacer name="horizontalSpacer_23">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="tempo">
+        <property name="styleSheet">
+         <string notr="true">QLabel
+{
+border-image : url(:/images/MesImages/tempo.png) 0 0 0 0 stretch stretch;
+border-width : 0px;
+background-position : center;
+min-width : 70px;
+max-width : 70px;
+min-height : 70px;
+max-height : 70px;
+color : transparent;
+}</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="ressources.qrc">:/images/MesImages/tempo.png</pixmap>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="spinBox">
+        <property name="styleSheet">
+         <string notr="true">QSpinBox
+{
+min-width : 70px;
+max-width : 70px;
+min-height : 30px;
+max-height : 30px;
+}</string>
+        </property>
+        <property name="minimum">
+         <number>60</number>
+        </property>
+        <property name="maximum">
+         <number>200</number>
+        </property>
+        <property name="value">
+         <number>120</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_22">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
      <widget class="Line" name="line_5">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -349,6 +557,9 @@ color : transparent;
       </item>
       <item>
        <widget class="QLabel" name="noire">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -445,7 +656,27 @@ height : 200px;
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="ressources.qrc">:/notes/MesNotes/triple-croche.png</pixmap>
+         <pixmap>:/notes/MesNotes/triple-croche.png</pixmap>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="styleSheet">
+         <string notr="true">QPushButton
+{
+border-image : url(:/notes/MesNotes/tripleCroche.jpg) 0 0 0 0 stretch stretch;
+border-width : 0px;
+background-position : center;
+min-width : 70px;
+max-width : 70px;
+min-height : 70px;
+max-height : 70px;
+color : transparent;
+}</string>
+        </property>
+        <property name="text">
+         <string>PushButton</string>
         </property>
        </widget>
       </item>
@@ -638,7 +869,7 @@ height : 200px;
     </item>
    </layout>
   </widget>
-  <widget class="Timer" name="widget" native="true">
+  <widget class="Timer" name="PartitionEdition" native="true">
    <property name="geometry">
     <rect>
      <x>550</x>
@@ -646,6 +877,9 @@ height : 200px;
      <width>651</width>
      <height>421</height>
     </rect>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::StrongFocus</enum>
    </property>
   </widget>
   <widget class="Line" name="line_2">
@@ -692,7 +926,7 @@ height : 200px;
   <customwidget>
    <class>Timer</class>
    <extends>QWidget</extends>
-   <header>timer.h</header>
+   <header location="global">timer.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
