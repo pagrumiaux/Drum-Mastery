@@ -27,6 +27,10 @@ FenEntrainement::FenEntrainement(QWidget *parent) :
     connect (&threadBoum, &QThread::finished,instanceDeBoum, &QObject::deleteLater);
     connect(this, &FenEntrainement::operate, instanceDeBoum, &Boum::doWork);
     connect(instanceDeBoum, &Boum::resultReady, this, &FenEntrainement::handleResults);
+    connect(this, &FenEntrainement::timerLance, instanceDeBoum, &Boum::lancerTimer);
+    QObject::connect(ui->partition,SIGNAL(changementPerformance(int)),ui->affichagePerformance,SLOT(display(int)));
+    ui->partition->parentFenetre = this;
+    ui->partition->uiParentFenetre = this->ui;
     threadBoum.start();
 }
 
@@ -60,19 +64,40 @@ void FenEntrainement::on_boutonRetourMenu_clicked() //Bouton pour revenir à la 
 //SLOTS associés aux clics sur les boutons
 void FenEntrainement::on_boutonPlayPause_clicked() //permet de passer du bouton play au bouton pause et inversement
 {
+    if (ui->partition->getMesure()->getNote() == NULL) //empêche de lancer le jeu si aucun fichier n'est chargé
+    {
+        QMessageBox erreurChargement;
+        erreurChargement.setText(tr("Veuillez charger une partition"));
+        erreurChargement.setWindowTitle("Attention");
+        QAbstractButton* boutonOk = erreurChargement.addButton(tr("Ok"), QMessageBox::YesRole);
+
+        erreurChargement.exec();
+
+        if (erreurChargement.clickedButton()== boutonOk)
+            {
+            QDir::setCurrent("../fenetreEdition/MesPartitions");
+            QString fichier = QFileDialog::getOpenFileName(this, tr("Ouvrir un fichier"), QDir :: currentPath(), tr("Fichier Drum Mastery (*.dm);;All files (*.*)"));
+            if(!fichier.isEmpty())
+                {
+                QFile file(fichier);
+                if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+                        return;
+                QTextStream text(&file);
+                ui->partition->load(&text);
+                }
+            ui->partition->setStarted(true);
+             }
+    }
+
     if (!ui->partition->getStarted()) //Si la partition n'est pas lancée, on la lance (copier coller de la partie lancement de "sheet.cpp")
     {
         ui->boutonPlayPause->setStyleSheet("QPushButton{border-image : url(:/images/MesImages/pauseoff.png) 0 0 0 0 stretch stretch; border-width : 0px; background-position : center; min-width : 70px; max-width : 70px; min-height : 70px; max-height : 70px; color : transparent;}");
         this->operate(); //signal qui lance la fonction Boum grâce au connect
         ui->partition->setFocus();
+        this->timerLance();
+        ui->affichagePerformance->display(0);
         ui->partition->start();
-        //ui->partition->afficherPerformance();
-        /*connect ()
-        while (ui->partition->getStarted() == true)
-        {
-            if (QT)
-            ui->affichagePerformance->display(ui->partition->getPerformance());
-        }*/
+
     }
 
     else
@@ -85,37 +110,16 @@ void FenEntrainement::on_boutonPlayPause_clicked() //permet de passer du bouton 
 
 void FenEntrainement::on_ouvrirExploreur_clicked() //SLOT pour ouvrir l'exploreur
 {
-    QStringList listeFichiers = QFileDialog::getOpenFileNames (this, tr("Ouvrir un fichier"), QDir :: currentPath(), tr("Documents (*doc);;All files (*.*)"));
-}
-
-
-
-void FenEntrainement::on_nouveau_clicked() //pour ouvrir une nouvelle fenêtre d'entraînement
-{
-    FenEntrainement *nouvelleFenetre;
-    nouvelleFenetre = new FenEntrainement;
-    nouvelleFenetre->show();
-}
-
-void FenEntrainement::on_boutonModeVue_clicked() //Pour activer ou desactiver le mode vue
-{
-    if (ui->boutonModeVue->text() == "On")
+    QDir::setCurrent("../fenetreEdition/MesPartitions");
+    QString fichier = QFileDialog::getOpenFileName(this, tr("Ouvrir un fichier"), QDir :: currentPath(), tr("Fichier Drum Mastery (*.dm);;All files (*.*)"));
+    if(!fichier.isEmpty())
     {
-        ui->boutonModeVue->setStyleSheet("QPushButton{border-image : url(:/images/MesImages/vue_off.png) 0 0 0 0 stretch stretch; border-width : 0px; background-position : center; min-width : 70px; max-width : 70px; min-height : 70px; max-height : 70px; color : transparent;}");
-        ui->boutonModeVue->setText("Off");
+        QFile file(fichier);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+                return;
+        QTextStream text(&file);
+        ui->partition->load(&text);
     }
-
-    else
-    {
-        ui->boutonModeVue->setStyleSheet("QPushButton{border-image : url(:/images/MesImages/vue_on.png) 0 0 0 0 stretch stretch; border-width : 0px; background-position : center; min-width : 70px; max-width : 70px; min-height : 70px; max-height : 70px; color : transparent;}");
-        ui->boutonModeVue->setText("On");
-    }
-}
-
-void FenEntrainement::on_stop_clicked() //pour arrêter la séquence rythmique et la remettre au début
-{
-    ui->boutonPlayPause->setStyleSheet("QPushButton{border-image : url(:/images/MesImages/playoff.png) 0 0 0 0 stretch stretch; border-width : 0px; background-position : center; min-width : 70px; max-width : 70px; min-height : 70px; max-height : 70px; color : transparent;}");
-    ui->boutonPlayPause->setText("Play");
 }
 
 void FenEntrainement::on_boutonMetronome_clicked() //Pour activer ou désactiver le métronome
@@ -146,9 +150,9 @@ void FenEntrainement::on_boutonSonOn_clicked()
 {
     if (ui->boutonSonOn->text() == "son_on")
     {
-        ui->boutonSonOn->setStyleSheet("QPushButton{border-width : 0px; background-position : center; min-width : 70px; max-width : 70px; min-height : 70px; max-height : 70px; color : black;}");
-        ui->boutonSonOn->setText("son_off");
+        ui->boutonSonOn->setStyleSheet("QPushButton{border-image : url(:/images/MesImages/volumeOff.png) 0 0 0 0 stretch stretch; border-width : 10px; background-position : center; min-width : 50px; max-width : 50px; min-height : 50px; max-height : 50px; color : transparent;}");
         ui->boutonVolume->setSliderPosition(0);
+        ui->boutonSonOn->setText("son_off");
     }
 
     else
@@ -159,15 +163,9 @@ void FenEntrainement::on_boutonSonOn_clicked()
     }
 }
 
-void FenEntrainement::on_boutonStop_clicked() //pour arrêter la lecture de partition
-{
-    ui->partition->stop();
-    ui->boutonPlayPause->setStyleSheet("QPushButton{border-image : url(:/images/MesImages/playoff.png) 0 0 0 0 stretch stretch; border-width : 0px; background-position : center; min-width : 70px; max-width : 70px; min-height : 70px; max-height : 70px; color : transparent;}");
-}
-
 void simulationEspace ()
 {
-    qDebug("espace simulé");
+    //qDebug("espace simulé");
     //ui->partition->setFocus();
         INPUT simulationAppuiEspace [1];
 
@@ -189,5 +187,14 @@ void simulationEspace ()
 void FenEntrainement::handleResults()
 {
     //this->simulationEspace();
+}
+
+
+void FenEntrainement::on_boutonBpm_valueChanged(int bpm)
+{
+    ui->partition->setBpm(bpm);
+    ui->partition->setDuree1Temps(bpm);
+    ui->partition->setDuree1Mesure(bpm);
+    ui->partition->getZoneColoree()->setDuree1Mesure(bpm);
 }
 
