@@ -1,8 +1,6 @@
 #ifndef SHEET
 #define SHEET
 
-#endif // SHEET
-
 #include <QBasicTimer>
 #include <QWidget>
 #include <QTime>
@@ -16,12 +14,16 @@
 #include "notes_jugees.h"
 #include "colored.h"
 
+class FenEntrainement;
+class Ui_FenEntrainement;
+
 class Sheet : public QWidget
 {
     Q_OBJECT
 
 public:
     Sheet(QWidget *parent = 0);
+    ~Sheet();
     Note_jugee* getNoteJugee(int numero, Note_jugee* premiere_note);
     void resetListeJ(Note_jugee* premiere_note);
     int getIndice_essai();
@@ -33,8 +35,24 @@ public:
     void save();
     void load(QTextStream *text);
     double CharToInt(QChar c);
+    void setMetronomeVolume(int position);
+    void setKickVolume(int position);
+    bool getStarted();
+    int getBpm ();
+    void setBpm(int valeurBpm);
+    void setDuree1Mesure(int bpm);
+    void setDuree1Temps(int bpm);
+    Measure* getMesure();
+    void setStarted(bool valeurStarted);
+    Colored *getZoneColoree();
+
+    FenEntrainement *parentFenetre;
+    Ui_FenEntrainement *uiParentFenetre;
 
 public slots:
+
+signals :
+    void changementPerformance(int);
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -77,5 +95,7 @@ private:
     Measure* mesure_preecoute;
     Note* note_preecoute; //variables utiles à la préécoute
     float cumul_preecoute;
+
 };
 
+#endif // SHEET
