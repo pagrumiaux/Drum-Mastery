@@ -208,7 +208,7 @@ void Colored::paintEvent(QPaintEvent * /* event */)
 
                 if (!liste_note->estDefaut())
                 {
-                    //qDebug("xn : %d, temps : %d, essai : %d", xn, liste_note->getTemps(), c+1);
+                    qDebug("xn : %d, temps : %d, essai : %d", xn, liste_note->getTemps(), c+1);
                     painter.drawPixmap(QRectF(xn, yn, 30, 58), image2, source2);
                 }
                 liste_note = liste_note->getSuivante();
@@ -553,3 +553,7 @@ void Colored::setTabListesJugees(Note_jugee* t_liste_jugee[])
         tab_liste_jugee[i] = t_liste_jugee[i];
 }
 
+void Colored::setDuree1Mesure(int bpm)
+{
+    duree1Mesure = 4 * 60*1000/bpm;
+}
