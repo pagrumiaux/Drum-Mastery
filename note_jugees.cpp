@@ -68,4 +68,3 @@ void Note_jugee::setDerniere(bool v)
 {
     m_derniere = v;
 }
-
